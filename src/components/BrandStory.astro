@@ -25,12 +25,12 @@ import { MENSAJE_GENERAL, waUrl } from '@/lib/whatsapp';
       </a>
     </div>
     <figure class="marca__foto">
-      <a href="/catalogo/pin-avion-metalico/?acabado=plateado" class="marca__enlace revela">
+      <a href="/catalogo/pin-avion-metalico/?acabado=plateado" class="marca__enlace">
         <Foto
           id="pin-avion-plateado"
           recorte="full"
-          sizes="(min-width: 1328px) 384px, (min-width: 1024px) calc(33.3vw - 43px), (min-width: 768px) 40vw, calc(100vw - 32px)"
-          class="marca__img"
+          sizes="(min-width: 1328px) 384px, (min-width: 1024px) calc(33.3vw - 43px), (min-width: 768px) 480px, calc(100vw - 32px)"
+          class="marca__img revela"
           alt="Pin avión metálico en acabado plateado sobre tela gris"
         />
       </a>
@@ -93,20 +93,13 @@ import { MENSAJE_GENERAL, waUrl } from '@/lib/whatsapp';
     color: var(--texto-3-osc);
   }
 
+  /* Tableta: apilado como en móvil (el titular necesita el ancho completo) */
   @media (min-width: 768px) {
-    .marca__reticula {
-      grid-template-columns: minmax(0, 1fr) minmax(240px, 36%);
-      align-items: center;
-      column-gap: 48px;
-    }
-    .marca__envios {
-      grid-column: 1 / -1;
-    }
     .marca__titulo {
       font-size: 40px;
     }
-    .marca__img {
-      aspect-ratio: 4 / 5;
+    .marca__foto {
+      max-width: 480px;
     }
   }
   @media (min-width: 1024px) {
@@ -115,6 +108,7 @@ import { MENSAJE_GENERAL, waUrl } from '@/lib/whatsapp';
     }
     .marca__reticula {
       grid-template-columns: repeat(12, minmax(0, 1fr));
+      align-items: center;
       column-gap: 24px;
       row-gap: 72px;
     }
@@ -129,6 +123,12 @@ import { MENSAJE_GENERAL, waUrl } from '@/lib/whatsapp';
     .marca__foto {
       grid-column: 9 / span 4;
       max-width: none;
+    }
+    .marca__envios {
+      grid-column: 1 / -1;
+    }
+    .marca__img {
+      aspect-ratio: 4 / 5;
     }
   }
 </style>

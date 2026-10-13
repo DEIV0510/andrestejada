@@ -8,6 +8,8 @@ interface Opcion {
   nombre: string;
   enMensaje: string;
   muestra?: string;
+  /** Enlace de pedido ya armado con esta opción (acabados). */
+  href?: string;
 }
 interface Props {
   nombre: string;
@@ -35,6 +37,7 @@ const { nombre, producto, opciones, param, preseleccion = true } = Astro.props;
           data-variante={o.id}
           data-nombre={o.nombre}
           data-en-mensaje={o.enMensaje}
+          data-href={o.href}
         >
           {o.muestra && <span class="selector__muestra" style={`background:${o.muestra}`} aria-hidden="true" />}
           {o.nombre}
@@ -74,8 +77,10 @@ const { nombre, producto, opciones, param, preseleccion = true } = Astro.props;
       background-color 160ms linear,
       color 160ms linear;
   }
-  .selector__op:hover {
-    background: var(--hover-claro);
+  @media (hover: hover) {
+    .selector__op:hover {
+      background: var(--hover-claro);
+    }
   }
   .selector__op[aria-checked='true'] {
     background: var(--negro);

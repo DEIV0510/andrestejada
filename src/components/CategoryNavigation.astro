@@ -35,16 +35,17 @@ import { CATEGORIAS } from '@/data/catalogo';
   .indice__lista li + li {
     border-top: 1px solid var(--hilo-osc);
   }
+  /* Móvil: una fila por categoría [n.º · presilla · nombre · flecha] */
   .indice__celda {
-    display: flex;
+    display: grid;
+    grid-template-columns: 20px 48px minmax(0, 1fr) auto;
     align-items: center;
-    gap: 16px;
+    column-gap: 16px;
     min-height: 56px;
     padding: 6px 0;
     transition: background-color 160ms linear;
   }
   .indice__n {
-    width: 20px;
     color: var(--texto-3-osc);
   }
   .indice__nombre {
@@ -52,9 +53,10 @@ import { CATEGORIAS } from '@/data/catalogo';
     letter-spacing: -0.01em;
   }
   .indice__flecha {
-    margin-left: auto;
     color: var(--texto-2-osc);
   }
+  /* Tableta y escritorio: panel de tres celdas; arriba presilla y número, abajo el
+     nombre con su flecha (el nombre siempre cabe en una línea). */
   @media (min-width: 768px) {
     .indice__lista {
       grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -64,27 +66,35 @@ import { CATEGORIAS } from '@/data/catalogo';
       border-left: 1px solid var(--gris);
     }
     .indice__celda {
-      min-height: 96px;
-      padding: 0 24px;
+      grid-template-columns: minmax(0, 1fr) auto;
+      grid-template-areas:
+        'presilla n'
+        'nombre flecha';
+      row-gap: 14px;
+      align-content: center;
+      min-height: 112px;
+      padding: 20px 24px;
     }
     .indice__lista li:first-child .indice__celda {
       padding-left: 0;
     }
-    .indice__nombre {
-      font-size: 20px;
+    .indice__lista li:last-child .indice__celda {
+      padding-right: 0;
     }
-  }
-  @media (min-width: 768px) and (max-width: 1023.98px) {
+    .indice__celda :global(.presilla) {
+      grid-area: presilla;
+    }
     .indice__n {
-      display: none;
-    }
-    .indice__celda {
-      gap: 12px;
-      padding: 0 16px;
+      grid-area: n;
+      justify-self: end;
     }
     .indice__nombre {
-      font-size: 17px;
-      text-wrap: balance;
+      grid-area: nombre;
+      font-size: 20px;
+      white-space: nowrap;
+    }
+    .indice__flecha {
+      grid-area: flecha;
     }
   }
   @media (min-width: 1024px) {

@@ -10,6 +10,10 @@
 > - Marcas de registro finas en el panel de la foto del hero (precisión, sin adorno).
 > - Uniformes en escritorio: cabecera a la izquierda y filas a la derecha (composición variada).
 > - Mensajes de WhatsApp con el texto del brief + enlace a la ficha.
+> - Tras dos rondas de revisión (46 + 28 hallazgos verificados): tarjetas con descripción e
+>   icono de WhatsApp en PEDIR; índice en panel (presilla y número arriba, nombre abajo);
+>   ficha en dos columnas en tableta; CTA del pie con contorno (un solo dorado por pantalla);
+>   Instagram con acercamientos que no repiten el catálogo; revelado de fotos con máscara.
 
 # ANDRÉS TEJADA AVIATION SHOP — Especificación final «Cuatro galones»
 

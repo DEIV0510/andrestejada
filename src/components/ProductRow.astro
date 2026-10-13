@@ -57,9 +57,13 @@ const corta = p.accion ? p.accion.split(' ')[0] : 'Pedir';
     min-width: 0;
   }
   .fila__nombre {
-    font: 600 20px/1.15 var(--font-display);
+    font: 600 19px/1.15 var(--font-display);
     letter-spacing: -0.015em;
     text-wrap: balance;
+  }
+  .fila--grande .fila__nombre {
+    font-size: 21px;
+    font-weight: 700;
   }
   .fila__linea {
     font-size: 14px;
@@ -97,28 +101,33 @@ const corta = p.accion ? p.accion.split(' ')[0] : 'Pedir';
       gap: 32px;
     }
     .fila__nombre {
-      font-size: 28px;
+      font-size: 22px;
     }
     .fila__linea {
       font-size: 15px;
     }
+    .fila--grande .fila__enlace {
+      min-height: 136px;
+    }
+    .fila--grande .fila__nombre {
+      font-size: 26px;
+    }
+  }
+  @media (min-width: 1024px) {
+    .fila__nombre {
+      font-size: 24px;
+    }
+    .fila--grande .fila__nombre {
+      font-size: clamp(28px, 2.3vw, 32px);
+    }
+  }
+  /* La acción larga («Pedir por WhatsApp») solo cuando sobra ancho */
+  @media (min-width: 1280px) {
     .fila__accion-texto {
       display: inline;
     }
     .fila__accion-corta {
       display: none;
-    }
-    .fila--grande .fila__enlace {
-      min-height: 128px;
-    }
-    .fila--grande .fila__nombre {
-      font-size: 32px;
-      font-weight: 700;
-    }
-  }
-  @media (min-width: 1024px) {
-    .fila--grande .fila__nombre {
-      font-size: clamp(30px, 2.6vw, 38px);
     }
   }
 </style>

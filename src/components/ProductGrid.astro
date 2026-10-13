@@ -65,14 +65,14 @@ const SIZES_VERTICAL_DOBLE = '(min-width: 1328px) 400px, (min-width: 1024px) cal
           <div class="catalogo__tarjetas">
             {rotuloTarjetas && <p class="rotulo catalogo__rotulo">{rotuloTarjetas}</p>}
             {anchas.length > 0 && (
-              <div class="rejilla rejilla--ancha">
+              <div class="rejilla rejilla--ancha" style={`--cols:${Math.min(anchas.length, 2)}`}>
                 {anchas.map((p, i) => (
                   <ProductCard producto={p} formato="ancho" sizes={SIZES_ANCHO} orden={i} />
                 ))}
               </div>
             )}
             {verticales.length > 0 && (
-              <div class="rejilla rejilla--vertical">
+              <div class="rejilla rejilla--vertical" style={`--cols-m:${Math.min(verticales.length, 2)};--cols:${Math.min(verticales.length, 3)}`}>
                 {verticales.map((p, i) => (
                   <ProductCard
                     producto={p}
@@ -153,7 +153,7 @@ const SIZES_VERTICAL_DOBLE = '(min-width: 1328px) 400px, (min-width: 1024px) cal
     --hilo-rejilla: var(--gris);
   }
   .rejilla--vertical {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(var(--cols-m, 2), minmax(0, 1fr));
   }
   /* En móvil, la última tarjeta impar ocupa las dos columnas en 4:3 */
   .rejilla--vertical > :global(.tarjeta:last-child:nth-child(odd)) {
@@ -167,10 +167,10 @@ const SIZES_VERTICAL_DOBLE = '(min-width: 1328px) 400px, (min-width: 1024px) cal
   }
   @media (min-width: 768px) {
     .rejilla--ancha {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-columns: repeat(var(--cols, 2), minmax(0, 1fr));
     }
     .rejilla--vertical {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
+      grid-template-columns: repeat(var(--cols, 3), minmax(0, 1fr));
     }
     .rejilla--vertical > :global(.tarjeta:last-child:nth-child(odd)) {
       grid-column: auto;

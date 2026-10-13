@@ -105,6 +105,7 @@ const fotos = opciones.length ? opciones.map((o) => ({ id: o.foto, variante: o.i
   .tarjeta__foto {
     position: relative;
     display: grid;
+    grid-template: minmax(0, 1fr) / minmax(0, 1fr);
     overflow: hidden;
     background: var(--blanco);
   }
@@ -206,6 +207,10 @@ const fotos = opciones.length ? opciones.map((o) => ({ id: o.foto, variante: o.i
   .tarjeta__muestras {
     display: flex;
   }
+  /* Sin JS las muestras no harían nada: no se muestran */
+  :global(html:not(.is-js)) .tarjeta__variantes {
+    display: none;
+  }
   .muestra {
     display: grid;
     place-items: center;
@@ -247,8 +252,10 @@ const fotos = opciones.length ? opciones.map((o) => ({ id: o.foto, variante: o.i
       background-color 160ms linear,
       color 160ms linear;
   }
-  .tarjeta__pedir:hover {
-    background: #262626;
+  @media (hover: hover) {
+    .tarjeta__pedir:hover {
+      background: #262626;
+    }
   }
 
   @media (min-width: 768px) {
@@ -303,9 +310,11 @@ const fotos = opciones.length ? opciones.map((o) => ({ id: o.foto, variante: o.i
     color: var(--blanco);
     box-shadow: inset 0 1px 0 var(--gris);
   }
-  :global(.sup-negro) .tarjeta__pedir:hover {
-    background: var(--dorado);
-    color: var(--negro);
+  @media (hover: hover) {
+    :global(.sup-negro) .tarjeta__pedir:hover {
+      background: var(--dorado);
+      color: var(--negro);
+    }
   }
   @media (min-width: 1024px) {
     :global(.sup-negro) .tarjeta__pedir {

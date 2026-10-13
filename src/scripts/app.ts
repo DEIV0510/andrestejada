@@ -26,7 +26,7 @@ function abrirMenu() {
   html.classList.add('is-menu');
   fuera().forEach((el) => (el.inert = true));
   // El cajón pasa a visible en el siguiente fotograma: enfocar después.
-  setTimeout(() => menu.querySelector<HTMLElement>('a')?.focus({ preventScroll: true }), 60);
+  setTimeout(() => menu.querySelector<HTMLElement>('[data-menu-enlace]')?.focus({ preventScroll: true }), 60);
   actualizar();
 }
 
@@ -61,7 +61,8 @@ document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape' && abierto()) cerrarMenu();
   // Foco atrapado dentro del cajón (botón Cerrar + enlaces)
   if (e.key === 'Tab' && abierto() && menu && boton) {
-    const focos = [boton, ...menu.querySelectorAll<HTMLElement>('a, button')];
+    // (el enlace «Cerrar menú» es solo para el modo sin JS: no cuenta)
+    const focos = [boton, ...menu.querySelectorAll<HTMLElement>('a:not(.menu__cerrar), button')];
     const i = focos.indexOf(document.activeElement as HTMLElement);
     if (e.shiftKey && i <= 0) {
       e.preventDefault();
@@ -225,10 +226,16 @@ for (const grupo of document.querySelectorAll<HTMLElement>('[data-variantes]')) 
       elegir(grupo, opciones[j], true);
     }
   });
-  // Ficha: abre el acabado pedido en la URL (?acabado=plateado)
+  // Ficha: abre el acabado pedido en la URL (?acabado=plateado) (la foto ya la activó
+  // el script en línea; aquí se sincronizan la URL y el mensaje)
   if (grupo.closest('[data-ficha]') && grupo.dataset.param) {
     const pedido = new URLSearchParams(location.search).get(grupo.dataset.param);
     const op = opciones.find((o) => o.dataset.variante === pedido);
     if (op) elegir(grupo, op);
   }
+}
+
+// Al arrancar, cada producto con opciones arma su mensaje con lo que está marcado.
+for (const raiz of document.querySelectorAll<HTMLElement>('[data-tarjeta], [data-ficha]')) {
+  if (raiz.querySelector('[data-variantes]')) mensaje(raiz);
 }

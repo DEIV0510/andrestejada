@@ -23,10 +23,11 @@ interface Props {
 
 const { id, sizes, recorte = 'card', alt, priority = false, diferida = false, class: cls, attrs = {}, imgAttrs = {} } = Astro.props;
 const d = pictureData(id, recorte);
+const { style: estiloExtra = '', ...resto } = attrs;
 const src = (v: string) => (diferida ? { 'data-srcset': v } : { srcset: v });
 ---
 
-<picture class:list={['foto', cls]} style={`--foto-bg:${d.bg}`} aria-hidden={diferida ? 'true' : undefined} {...attrs}>
+<picture class:list={['foto', cls]} {...resto} style={`--foto-bg:${d.bg};${estiloExtra}`} aria-hidden={diferida ? 'true' : undefined}>
   <source type="image/avif" {...src(d.avif)} sizes={sizes} />
   <source type="image/webp" {...src(d.webp)} sizes={sizes} />
   <img

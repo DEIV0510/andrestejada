@@ -28,8 +28,8 @@ const FOTOS: MediaId[] = ['llavero-rbf', 'pines-esmaltados', 'alas-cessna'];
       {
         FOTOS.map((id, i) => (
           <li>
-            <a href={INSTAGRAM.url} target="_blank" rel="noopener" tabindex="-1" class="revela" style={`--orden:${i}`}>
-              <Foto id={id} recorte="detalle" sizes="(min-width: 1328px) 230px, (min-width: 1024px) calc(19vw - 20px), calc((100vw - 34px) / 3)" class="ig__foto" alt="" />
+            <a href={INSTAGRAM.url} target="_blank" rel="noopener" tabindex="-1">
+              <Foto id={id} recorte="detalle" sizes="(min-width: 1328px) 230px, (min-width: 1024px) calc(19vw - 20px), calc((100vw - 34px) / 3)" class="ig__foto revela" alt="" attrs={{ style: `--orden:${i}` }} />
             </a>
           </li>
         ))

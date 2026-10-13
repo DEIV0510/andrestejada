@@ -43,6 +43,8 @@ const wa = waUrl(MENSAJE_GENERAL);
 
 <div id="menu-movil" class="menu sup-negro" data-menu>
   <nav class="menu__nav contenedor" aria-label="Menú">
+    <!-- Sin JS no hay botón que cierre el cajón: este enlace lo cierra (deja de ser :target) -->
+    <a class="menu__cerrar" href="#contenido">Cerrar menú</a>
     <ol role="list">
       {
         NAV.map((l, i) => (
@@ -131,7 +133,7 @@ const wa = waUrl(MENSAJE_GENERAL);
       display: flex;
       align-items: center;
       min-height: 44px;
-      font: 600 12px/1 var(--font-rotulo);
+      font: 600 12px/1 var(--font-menu);
       letter-spacing: 0.12em;
       text-transform: uppercase;
       white-space: nowrap;
@@ -178,15 +180,17 @@ const wa = waUrl(MENSAJE_GENERAL);
       border-color 160ms linear,
       background-color 160ms linear;
   }
-  .header__wa:hover {
-    border-color: var(--dorado);
+  @media (hover: hover) {
+    .header__wa:hover {
+      border-color: var(--dorado);
+    }
   }
 
   .header__menu {
     display: flex;
     align-items: center;
     justify-content: flex-end;
-    min-width: 64px;
+    min-width: 80px;
     height: 44px;
     padding-left: 12px;
     font: 600 12px/1 var(--font-rotulo);
@@ -267,6 +271,21 @@ const wa = waUrl(MENSAJE_GENERAL);
     font: 700 28px/1.1 var(--font-display);
     letter-spacing: -0.02em;
   }
+  .menu__cerrar {
+    display: none;
+    align-self: flex-end;
+    align-items: center;
+    min-height: 44px;
+    margin-bottom: 8px;
+    font: 600 12px/1 var(--font-rotulo);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+  :global(html:not(.is-app)) .menu__cerrar {
+    display: inline-flex;
+  }
   .menu__n {
     min-width: 2.2ch;
     font: 500 12px/1 var(--font-text);
@@ -274,8 +293,22 @@ const wa = waUrl(MENSAJE_GENERAL);
     letter-spacing: 0.08em;
     color: var(--texto-3-osc);
   }
+  /* Sección actual: barra dorada junto al número (forma, no solo color) */
   .menu__nav li a[aria-current] .menu__n {
     color: var(--dorado);
+  }
+  .menu__nav li a {
+    position: relative;
+  }
+  .menu__nav li a[aria-current]::before {
+    content: '';
+    position: absolute;
+    left: -12px;
+    top: 50%;
+    width: 3px;
+    height: 28px;
+    margin-top: -14px;
+    background: var(--dorado);
   }
   .menu__pie {
     margin-top: auto;

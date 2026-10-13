@@ -84,6 +84,11 @@ body {
     font-size: 17px;
   }
 }
+p,
+li,
+figcaption {
+  text-wrap: pretty;
+}
 h1,
 h2,
 h3,
@@ -204,6 +209,11 @@ button {
   letter-spacing: -0.02em;
   text-wrap: balance;
 }
+@media (min-width: 768px) {
+  .titulo-seccion {
+    font-size: 40px;
+  }
+}
 @media (min-width: 1024px) {
   .titulo-seccion {
     font-size: 44px;
@@ -252,8 +262,10 @@ button {
   opacity: 0;
   transition: opacity 160ms linear;
 }
-.btn:hover::before {
-  opacity: 1;
+@media (hover: hover) {
+  .btn:hover::before {
+    opacity: 1;
+  }
 }
 .btn:active {
   transform: translateY(1px);
@@ -304,9 +316,13 @@ button {
 }
 
 /* La cabecera fija no tapa ni el destino de un ancla ni el elemento enfocado con el
-   teclado (WCAG 2.4.11). Solo scroll-padding: sumado a scroll-margin se desviaría. */
-html {
-  scroll-padding-top: var(--header-h);
+   teclado (WCAG 2.4.11). Solo scroll-margin: con scroll-padding en <html>, Chrome
+   desplaza la página al enfocar los controles de la propia cabecera. */
+[data-ancla] {
+  scroll-margin-top: var(--header-h);
+}
+main :is(a, button, [tabindex]) {
+  scroll-margin-top: calc(var(--header-h) + 8px);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -345,8 +361,11 @@ html.is-menu {
     border: 1px solid ButtonText;
   }
   [role='radio'][aria-checked='true'] {
-    outline: 2px solid Highlight;
-    outline-offset: -4px;
+    border: 3px solid Highlight;
+  }
+  [role='radio']:focus-visible {
+    outline: 2px solid CanvasText;
+    outline-offset: 2px;
   }
   .muestra__color,
   .selector__muestra,

@@ -37,8 +37,17 @@
   line-gap-override: 0%;
   size-adjust: 101.3350%;
 }
+@font-face {
+  font-family: "Inter Menu Fallback";
+  src: local('Arial'), local('ArialMT');
+  ascent-override: 92.8506%;
+  descent-override: 23.1191%;
+  line-gap-override: 0%;
+  size-adjust: 104.3343%;
+}
 :root {
   --font-display: Manrope, "Manrope Fallback", Arial, system-ui, sans-serif;
   --font-text: Inter, "Inter Fallback", Arial, system-ui, sans-serif;
   --font-rotulo: Inter, "Inter Rotulo Fallback", Arial, system-ui, sans-serif;
+  --font-menu: Inter, "Inter Menu Fallback", Arial, system-ui, sans-serif;
 }

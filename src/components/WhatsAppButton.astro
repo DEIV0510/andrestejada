@@ -31,8 +31,10 @@ import { MENSAJE_GENERAL, waUrl } from '@/lib/whatsapp';
       visibility 0s linear 0s,
       background-color 160ms linear;
   }
-  .flotante:hover {
-    background: #1a1a1a;
+  @media (hover: hover) {
+    .flotante:hover {
+      background: #1a1a1a;
+    }
   }
   @media (min-width: 1024px) {
     .flotante {

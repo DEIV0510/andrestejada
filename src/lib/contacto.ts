@@ -14,7 +14,7 @@ export const INSTAGRAM = {
   usuario: 'aviationshop_at',
   url: 'https://www.instagram.com/aviationshop_at/',
   /** Bio real del perfil (consultada el 2026-10-13), sin emojis. */
-  bio: 'Accesorios & Uniformes Aeronáuticos · Envíos a toda Colombia',
+  bio: 'Accesorios & Uniformes Aeronáuticos · Envíos a toda Colombia',
 };
 
 export const MARCA = {
@@ -22,7 +22,7 @@ export const MARCA = {
   corto: 'Andrés Tejada',
   /** Lo confirmado en el brief. Nada más. */
   tienda: 'Tienda virtual',
-  envios: 'Envíos a toda Colombia',
+  envios: 'Envíos a toda Colombia',
   /** Ventas al por mayor: el cliente dice que aún no están disponibles. No se muestran. */
   mayoristas: false,
 };

@@ -21,22 +21,29 @@ const { producto: p } = Astro.props;
 const cat = categoriaDe(p);
 const ficha = urlFicha(p)!;
 const fichaAbs = new URL(ficha, Astro.site).href;
-const opciones = p.variantes?.opciones ?? [];
-const inicial = opciones[0];
-const href = waProducto({ nombre: p.nombre, variante: inicial?.enMensaje, url: inicial ? `${fichaAbs}?acabado=${inicial.id}` : fichaAbs });
+const opciones = (p.variantes?.opciones ?? []).map((o) => ({
+  ...o,
+  // Enlace de pedido ya armado para cada acabado (lo usa el script en línea)
+  href: waProducto({ nombre: p.nombre, variante: o.enMensaje, url: `${fichaAbs}?acabado=${o.id}` }),
+}));
+const conVariantes = opciones.length > 1;
+// Sin JS el selector no se muestra: el pedido sale sin acabado y se elige en el chat.
+const href = conVariantes ? waProducto({ nombre: p.nombre, url: fichaAbs }) : waProducto({ nombre: p.nombre, variante: opciones[0]?.enMensaje, url: fichaAbs });
 const card = getMedia(p.foto!).crops.card;
 const ancha = card.w / card.h >= 1.4;
-const conVariantes = opciones.length > 1;
 const fotos = conVariantes ? opciones.map((o) => ({ id: o.foto, variante: o.id })) : [{ id: p.foto!, variante: null as string | null }];
-const SIZES = ancha ? '(min-width: 1328px) 700px, (min-width: 1024px) calc(58vw - 64px), (min-width: 768px) calc(100vw - 80px), 100vw' : '(min-width: 768px) 560px, 100vw';
+const SIZES = ancha
+  ? '(min-width: 1328px) 700px, (min-width: 1024px) calc(58vw - 64px), (min-width: 768px) calc(100vw - 80px), 100vw'
+  : '(min-width: 1024px) min(560px, calc((100vh - 136px) * 0.8)), (min-width: 768px) calc(50vw - 52px), 100vw';
 const lcp = pictureData(fotos[0].id, 'card');
 const precio = precioTexto(p);
 const otros = PRODUCTOS.filter((x) => x.id !== p.id && x.foto && x.categoria === p.categoria);
 const nota = precio == null ? 'Disponibilidad y valor se confirman por WhatsApp.' : 'Disponibilidad y envío se confirman por WhatsApp.';
 
-// Con variantes, la foto elegida se activa con un script en línea antes del primer pintado
-// (lee ?acabado=): así no se descarga la variante que no se ve.
-const activador = `(function(){var c=document.currentScript.previousElementSibling,q=new URLSearchParams(location.search).get('acabado'),f=c.querySelectorAll('[data-variante-foto]'),e=f[0];for(var i=0;i<f.length;i++)if(f[i].getAttribute('data-variante-foto')===q)e=f[i];for(var j=0;j<f.length;j++)f[j].classList.toggle('is-activa',f[j]===e);e.removeAttribute('aria-hidden');var m=e.querySelector('img');m.setAttribute('fetchpriority','high');m.setAttribute('loading','eager');e.querySelectorAll('[data-srcset]').forEach(function(s){s.setAttribute('srcset',s.getAttribute('data-srcset'));s.removeAttribute('data-srcset')});if(m.getAttribute('data-src')){m.src=m.getAttribute('data-src');m.removeAttribute('data-src')}})();`;
+// Con variantes, un script en línea (antes del primer pintado) activa el acabado de la URL
+// (?acabado=) o el primero: carga solo esa foto, marca su opción y arma el enlace de pedido.
+// Así no se descarga la variante que no se ve y nada cambia cuando llega el módulo.
+const activador = `(function(){var q=new URLSearchParams(location.search).get('acabado'),f=document.querySelectorAll('.ficha__foto [data-variante-foto]'),e=f[0];for(var i=0;i<f.length;i++)if(f[i].getAttribute('data-variante-foto')===q)e=f[i];var id=e.getAttribute('data-variante-foto');for(var j=0;j<f.length;j++)f[j].classList.toggle('is-activa',f[j]===e);e.removeAttribute('aria-hidden');var m=e.querySelector('img');m.setAttribute('fetchpriority','high');m.setAttribute('loading','eager');e.querySelectorAll('[data-srcset]').forEach(function(s){s.setAttribute('srcset',s.getAttribute('data-srcset'));s.removeAttribute('data-srcset')});if(m.getAttribute('data-src')){m.src=m.getAttribute('data-src');m.removeAttribute('data-src')}var r=document.querySelectorAll('[data-param="acabado"] [role="radio"]');for(var k=0;k<r.length;k++){var on=r[k].getAttribute('data-variante')===id;r[k].setAttribute('aria-checked',on?'true':'false');r[k].tabIndex=on?0:-1;if(on){var c=document.querySelector('[data-pedir]');if(c)c.href=r[k].getAttribute('data-href')}}})();`;
 
 const migas = {
   '@context': 'https://schema.org',
@@ -58,9 +65,9 @@ const migas = {
   jsonld={[migas]}
   flotante={false}
 >
-  <article class="ficha sup-blanco" data-ficha data-nombre={p.nombre} data-url={fichaAbs}>
+  <article class:list={['ficha sup-blanco', { 'ficha--ancha': ancha }]} data-ficha data-nombre={p.nombre} data-url={fichaAbs}>
     <div class="contenedor ficha__reticula">
-      <div class:list={['ficha__foto', { 'ficha__foto--ancha': ancha }]}>
+      <div class="ficha__foto">
         {
           fotos.map((f, i) => (
             <Foto
@@ -82,17 +89,16 @@ const migas = {
           )
         }
       </div>
-      {conVariantes && <script is:inline set:html={activador} />}
 
       <div class="ficha__info">
         <nav aria-label="Ruta" class="ficha__migas rotulo">
           <a href={`/#${cat.id}`}>{cat.nombre}</a>
-          <span class="ficha__migas-actual"><span aria-hidden="true">/ </span><span aria-current="page">{p.nombre}</span></span>
+          <span aria-current="page">{p.nombre}</span>
         </nav>
         <h1 class="ficha__titulo">{p.nombre}</h1>
         <p class="ficha__linea">{p.linea}</p>
         {precio && <p class="ficha__precio tnum">{precio}</p>}
-        {p.variantes && <SelectorOpciones nombre={p.variantes.nombre} producto={p.nombre} opciones={p.variantes.opciones} param="acabado" />}
+        {p.variantes && <SelectorOpciones nombre={p.variantes.nombre} producto={p.nombre} opciones={opciones} param="acabado" />}
         {
           p.tallas && (
             <SelectorOpciones
@@ -103,7 +109,7 @@ const migas = {
             />
           )
         }
-        <p class="ficha__nota texto-2">{nota} Envíos a toda Colombia.</p>
+        <p class="ficha__nota texto-2">{nota} Envíos a toda&nbsp;Colombia.</p>
         <div class="ficha__barra sup-negro">
           <a class="btn btn--oro ficha__cta" href={href} target="_blank" rel="noopener" data-pedir>
             <Icono name="whatsapp" size={18} />
@@ -132,6 +138,7 @@ const migas = {
           )
         }
       </div>
+      {conVariantes && <script is:inline set:html={activador} />}
     </div>
   </article>
 </Base>
@@ -142,8 +149,8 @@ const migas = {
     :global(body) {
       padding-bottom: calc(64px + env(safe-area-inset-bottom));
     }
-    :global(html) {
-      scroll-padding-bottom: calc(72px + env(safe-area-inset-bottom));
+    :global(main :is(a, button)) {
+      scroll-margin-bottom: calc(80px + env(safe-area-inset-bottom));
     }
   }
   .ficha {
@@ -151,37 +158,54 @@ const migas = {
   }
   .ficha__reticula {
     display: grid;
+    grid-template-columns: minmax(0, 1fr);
     padding-inline: 0;
   }
+
+  /* ── Foto: las variantes se apilan en la misma celda y llenan el marco ── */
   .ficha__foto {
     display: grid;
+    grid-template: minmax(0, 1fr) / minmax(0, 1fr);
+    width: 100%;
     aspect-ratio: 4 / 3;
+    /* en pantallas bajas, la foto cede alto para que nombre y opciones se vean */
+    max-height: max(200px, calc(100svh - var(--header-h) - 64px - 270px));
     overflow: hidden;
     background: var(--blanco);
   }
-  .ficha__foto--ancha {
-    place-items: center;
-    aspect-ratio: 3 / 2;
+  .ficha__foto > :global(*) {
+    grid-area: 1 / 1;
   }
   .ficha__img {
-    grid-area: 1 / 1;
+    width: 100%;
+    height: 100%;
     opacity: 0;
     transition: opacity 200ms ease;
   }
   .ficha__img.is-activa {
     opacity: 1;
   }
-  .ficha__foto:not(.ficha__foto--ancha) .ficha__img {
-    width: 100%;
-    height: 100%;
-  }
-  .ficha__foto:not(.ficha__foto--ancha) .ficha__img :global(img) {
+  .ficha__img :global(img) {
     object-fit: cover;
-    object-position: 50% 58%;
+    object-position: 50% 55%;
   }
-  .ficha__foto--ancha .ficha__img {
+  .ficha--ancha .ficha__foto {
+    aspect-ratio: 3 / 2;
+    place-items: center;
+  }
+  .ficha--ancha .ficha__img {
     width: 88%;
+    height: auto;
   }
+  .ficha--ancha .ficha__img :global(img) {
+    object-fit: contain;
+  }
+  /* Sin JS no se cargan las variantes diferidas: se ve la foto del <noscript>. */
+  :global(html:not(.is-js)) .ficha__foto :global(picture[aria-hidden='true']) {
+    display: none;
+  }
+
+  /* ── Información ── */
   .ficha__info {
     display: grid;
     align-content: start;
@@ -203,8 +227,12 @@ const migas = {
     text-decoration: underline;
     text-underline-offset: 3px;
   }
-  .ficha__migas-actual {
-    white-space: nowrap;
+  /* el separador cierra la línea del enlace (no abre la siguiente) */
+  .ficha__migas a::after {
+    content: '/';
+    display: inline-block;
+    margin-left: 8px;
+    text-decoration: none;
   }
   .ficha__titulo {
     font: 700 30px/1.05 var(--font-display);
@@ -219,6 +247,10 @@ const migas = {
   }
   .ficha__nota {
     font-size: 14px;
+  }
+  /* Sin JS no hay selector de acabado: el pedido sale sin acabado */
+  :global(html:not(.is-js)) .ficha__info :global(.selector) {
+    display: none;
   }
   /* Móvil y tablet: la acción queda fija abajo, sobre negro (foco dorado claro) */
   .ficha__barra {
@@ -259,41 +291,40 @@ const migas = {
     font: 600 18px/1.2 var(--font-display);
   }
 
+  /* ── Tableta: retícula de 8 columnas alineada al margen del sitio ── */
   @media (min-width: 768px) {
     .ficha {
       padding-top: 40px;
     }
     .ficha__reticula {
       padding-inline: var(--margen);
-      gap: 32px;
-      justify-items: center;
+      grid-template-columns: repeat(8, minmax(0, 1fr));
+      column-gap: 24px;
+      row-gap: 32px;
+      align-items: start;
     }
     .ficha__foto {
+      grid-column: 1 / span 4;
       aspect-ratio: 4 / 5;
-      width: 100%;
-      max-width: 560px;
-    }
-    .ficha__foto:not(.ficha__foto--ancha) .ficha__img :global(img) {
-      object-position: 50% 50%;
-    }
-    .ficha__foto--ancha {
-      aspect-ratio: 3 / 2;
-      max-width: none;
-      border: 1px solid var(--hilo);
+      max-height: none;
     }
     .ficha__info {
-      width: 100%;
-      max-width: 560px;
+      grid-column: 5 / span 4;
       padding: 0;
     }
-    .ficha__foto--ancha + .ficha__info,
-    .ficha__foto--ancha ~ .ficha__info {
-      max-width: none;
+    .ficha--ancha .ficha__foto {
+      grid-column: 1 / -1;
+      aspect-ratio: 3 / 2;
+      border: 1px solid var(--hilo);
+    }
+    .ficha--ancha .ficha__info {
+      grid-column: 1 / -1;
     }
     .ficha__titulo {
-      font-size: 44px;
+      font-size: 36px;
     }
   }
+  /* ── Escritorio: 12 columnas, información fija al lado de la foto ── */
   @media (min-width: 1024px) {
     .ficha {
       padding-top: 48px;
@@ -301,21 +332,19 @@ const migas = {
     }
     .ficha__reticula {
       grid-template-columns: repeat(12, minmax(0, 1fr));
-      column-gap: 24px;
-      align-items: start;
-      justify-items: stretch;
     }
     .ficha__foto {
       grid-column: 1 / span 6;
+      width: 100%;
       max-width: min(100%, calc((100svh - var(--header-h) - 64px) * 0.8));
     }
-    .ficha__foto--ancha {
+    .ficha--ancha .ficha__foto {
       grid-column: 1 / span 7;
       max-width: none;
     }
-    .ficha__info {
+    .ficha__info,
+    .ficha--ancha .ficha__info {
       grid-column: 8 / span 5;
-      max-width: none;
       position: sticky;
       top: calc(var(--header-h) + 32px);
       gap: 20px;
