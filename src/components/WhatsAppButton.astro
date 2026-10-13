@@ -42,6 +42,18 @@ import { MENSAJE_GENERAL, waUrl } from '@/lib/whatsapp';
       height: 56px;
     }
   }
+  /* Mientras llega el módulo: oculto (sin parpadeo al cargar). Si nunca llega, aparece. */
+  :global(html.is-js:not(.is-app)) .flotante {
+    opacity: 0;
+    visibility: hidden;
+    animation: flotante-respaldo 1ms linear 4s forwards;
+  }
+  @keyframes flotante-respaldo {
+    to {
+      opacity: 1;
+      visibility: visible;
+    }
+  }
   :global(html.is-app) .flotante:not(:global(.is-visible)) {
     opacity: 0;
     transform: translateY(8px);

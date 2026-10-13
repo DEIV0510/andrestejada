@@ -49,6 +49,23 @@ const interHref = await build('node_modules/@fontsource-variable/inter/files/int
 const display = createFontStack([manrope, arial], { fontFaceFormat: 'styleString' });
 const text = createFontStack([inter, arial], { fontFaceFormat: 'styleString' });
 
+// Rótulos y botones (MAYÚSCULAS con espaciado): ahí Arial sale ~5 % más ancha que Inter
+// aunque el respaldo esté ajustado para minúsculas. Medido en el navegador
+// (.cache/qa/yo-fuentes.mjs): ancho Inter / ancho respaldo = 0,946 de media.
+const ESCALA_ROTULO = 0.946;
+const ajuste = (pct) => parseFloat(text.fontFaces.match(new RegExp(pct + ': ([0-9.]+)%'))[1]);
+const sizeAdjust = ajuste('size-adjust');
+const rotuloSize = sizeAdjust * ESCALA_ROTULO;
+const escalar = (pct) => ((ajuste(pct) * sizeAdjust) / rotuloSize).toFixed(4);
+const rotuloFace = `@font-face {
+  font-family: "Inter Rotulo Fallback";
+  src: local('Arial'), local('ArialMT');
+  ascent-override: ${escalar('ascent-override')}%;
+  descent-override: ${escalar('descent-override')}%;
+  line-gap-override: 0%;
+  size-adjust: ${rotuloSize.toFixed(4)}%;
+}`;
+
 const css = `/* Generado por scripts/fuentes.mjs — no editar a mano. */
 @font-face {
   font-family: 'Manrope';
@@ -66,9 +83,11 @@ const css = `/* Generado por scripts/fuentes.mjs — no editar a mano. */
 }
 ${display.fontFaces}
 ${text.fontFaces}
+${rotuloFace}
 :root {
   --font-display: ${display.fontFamily}, system-ui, sans-serif;
   --font-text: ${text.fontFamily}, system-ui, sans-serif;
+  --font-rotulo: Inter, "Inter Rotulo Fallback", Arial, system-ui, sans-serif;
 }
 `;
 

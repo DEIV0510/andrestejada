@@ -25,7 +25,8 @@ function abrirMenu() {
   if (textoBoton) textoBoton.textContent = 'Cerrar';
   html.classList.add('is-menu');
   fuera().forEach((el) => (el.inert = true));
-  menu.querySelector<HTMLElement>('a')?.focus({ preventScroll: true });
+  // El cajón pasa a visible en el siguiente fotograma: enfocar después.
+  setTimeout(() => menu.querySelector<HTMLElement>('a')?.focus({ preventScroll: true }), 60);
   actualizar();
 }
 
