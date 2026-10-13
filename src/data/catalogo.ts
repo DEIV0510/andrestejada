@@ -31,7 +31,7 @@ export interface Producto {
   nombre: string;
   categoria: CategoriaId;
   /** Subgrupo dentro de la categoría (solo «coleccionismo» por ahora). */
-  grupo?: 'coleccionismo';
+  grupo?: keyof typeof GRUPOS;
   /** Una línea, la que se ve en la fila o en la ficha. */
   linea: string;
   foto: MediaId | null;
@@ -44,6 +44,9 @@ export interface Producto {
   /** Mensaje propio de WhatsApp (si no, se usa el del brief). */
   mensaje?: string;
 }
+
+/** Subgrupos dentro de una categoría y su rótulo visible. */
+export const GRUPOS = { coleccionismo: 'Coleccionismo' } as const;
 
 export interface Categoria {
   id: CategoriaId;
@@ -199,6 +202,7 @@ export const PRODUCTOS: Producto[] = [
 ];
 
 export const porCategoria = (id: CategoriaId) => PRODUCTOS.filter((p) => p.categoria === id);
+export const categoria = (id: CategoriaId) => CATEGORIAS.find((c) => c.id === id)!;
 /** Productos con ficha propia: solo los que tienen foto real. */
 export const conFicha = () => PRODUCTOS.filter((p) => p.foto);
 export const urlFicha = (p: Producto) => (p.foto ? `/catalogo/${p.id}/` : null);

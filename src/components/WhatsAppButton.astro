@@ -1,14 +1,14 @@
 ---
 // Botón flotante de WhatsApp. Aparece cuando los botones del hero salen de la pantalla
 // (medido con el scroll, no con IntersectionObserver, que no ve los saltos de ancla) y se
-// oculta con el menú abierto o con el footer a la vista. Sin JS, siempre visible.
+// oculta con el menú abierto o con el footer a la vista. Si el módulo no arranca, siempre visible.
 import Icono from './Icono.astro';
 import { MENSAJE_GENERAL, waUrl } from '@/lib/whatsapp';
 ---
 
 <a class="flotante" href={waUrl(MENSAJE_GENERAL)} target="_blank" rel="noopener" data-flotante>
   <Icono name="whatsapp" size={26} />
-  <span class="visualmente-oculto">Escribir por WhatsApp (se abre en otra pestaña)</span>
+  <span class="visualmente-oculto">Escribir por WhatsApp (abre WhatsApp en otra pestaña)</span>
 </a>
 
 <style>
@@ -42,7 +42,7 @@ import { MENSAJE_GENERAL, waUrl } from '@/lib/whatsapp';
       height: 56px;
     }
   }
-  :global(html.is-js) .flotante:not(:global(.is-visible)) {
+  :global(html.is-app) .flotante:not(:global(.is-visible)) {
     opacity: 0;
     transform: translateY(8px);
     visibility: hidden;
@@ -54,7 +54,7 @@ import { MENSAJE_GENERAL, waUrl } from '@/lib/whatsapp';
   }
   @media (prefers-reduced-motion: reduce) {
     .flotante,
-    :global(html.is-js) .flotante:not(:global(.is-visible)) {
+    :global(html.is-app) .flotante:not(:global(.is-visible)) {
       transform: none;
     }
   }

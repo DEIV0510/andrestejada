@@ -23,6 +23,8 @@ interface Props {
   jsonld?: Record<string, unknown>[];
   /** Botón flotante de WhatsApp (las fichas usan su propia barra). */
   flotante?: boolean;
+  /** Páginas que no deben indexarse (404): sin canonical ni og:url. */
+  noindex?: boolean;
 }
 
 const {
@@ -34,6 +36,7 @@ const {
   intro = false,
   jsonld = [],
   flotante = true,
+  noindex = false,
 } = Astro.props;
 
 const site = Astro.site!;
@@ -59,7 +62,7 @@ const tienda = {
     availableLanguage: 'es',
   },
 };
-const datos = [tienda, ...jsonld];
+const datos = noindex ? [] : [tienda, ...jsonld];
 ---
 
 <!doctype html>
@@ -69,12 +72,15 @@ const datos = [tienda, ...jsonld];
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <title>{title}</title>
     <meta name="description" content={description} />
-    <link rel="canonical" href={canonical} />
+    {noindex ? <meta name="robots" content="noindex" /> : <link rel="canonical" href={canonical} />}
     <meta name="theme-color" content="#090909" />
     <meta name="format-detection" content="telephone=no" />
 
-    <!-- Arranque: is-js, pantalla de carga (solo 1.ª visita a la portada) y entrada del hero.
-         La salida de la pantalla de carga se decide aquí, sin esperar al módulo principal. -->
+    <!-- Arranque, antes del primer pintado:
+         · is-js: hay JavaScript (la entrada del hero puede animarse).
+         · Pantalla de carga solo en la 1.ª visita al sitio, en la portada, con movimiento
+           permitido y sin conexión lenta. Su salida se decide aquí, sin esperar al módulo.
+         · El indicador avanza solo con hitos reales: documento, tipografía, foto principal. -->
     <script is:inline>
       (function () {
         var d = document.documentElement;
@@ -84,10 +90,9 @@ const datos = [tienda, ...jsonld];
           var reducir = matchMedia('(prefers-reduced-motion: reduce)').matches;
           var c = navigator.connection;
           var lenta = !!(c && (c.saveData || /(^|-)(2g|3g)$/.test(c.effectiveType || '')));
-          if (d.getAttribute('data-intro') === '1' && !reducir && !lenta && !localStorage.getItem('at_intro')) {
-            localStorage.setItem('at_intro', '1');
-            intro = true;
-          }
+          var visto = localStorage.getItem('at_intro');
+          localStorage.setItem('at_intro', '1');
+          intro = d.getAttribute('data-intro') === '1' && !reducir && !lenta && !visto;
         } catch (e) {}
         if (!intro) {
           d.classList.add('is-ready');
@@ -95,9 +100,7 @@ const datos = [tienda, ...jsonld];
         }
         d.classList.add('is-intro');
         var hechos = 0;
-        var t0 = 0;
         var cerrado = false;
-        // Indicador honesto: avanza solo con hitos reales (documento, tipografías, foto principal).
         function hito() {
           hechos++;
           d.style.setProperty('--intro-p', String(Math.min(hechos, 3) / 3));
@@ -108,26 +111,32 @@ const datos = [tienda, ...jsonld];
           d.classList.add('is-intro-out', 'is-ready');
           setTimeout(function () {
             d.classList.remove('is-intro', 'is-intro-out');
-          }, 420);
+          }, 480);
         }
-        requestAnimationFrame(function () {
-          t0 = performance.now();
-        });
         function alListo() {
           hito();
           var foto = document.querySelector('img[fetchpriority="high"]');
           if (foto) {
             if (foto.complete) hito();
-            else foto.addEventListener('load', hito, { once: true }), foto.addEventListener('error', hito, { once: true });
+            else {
+              foto.addEventListener('load', hito, { once: true });
+              foto.addEventListener('error', hito, { once: true });
+            }
           }
-          var resta = Math.max(0, 550 - (performance.now() - (t0 || performance.now())));
-          setTimeout(cerrar, resta);
+          if (document.fonts && document.fonts.load) document.fonts.load('700 1em Manrope').then(hito, hito);
+          // El mínimo perceptible se cuenta desde que la pantalla de carga se pinta de verdad;
+          // si ese pintado llega tarde, solo se asoma. Nunca pasa de ~1,4 s.
+          requestAnimationFrame(function () {
+            requestAnimationFrame(function () {
+              var resta = Math.max(250, Math.min(650, 1400 - performance.now()));
+              setTimeout(cerrar, resta);
+            });
+          });
         }
-        if (document.fonts && document.fonts.ready) document.fonts.ready.then(hito);
         if (document.readyState !== 'loading') alListo();
         else document.addEventListener('DOMContentLoaded', alListo, { once: true });
-        // Tope: nunca más de 1,4 s.
-        setTimeout(cerrar, 1400);
+        // Tope absoluto (pestaña en segundo plano, rAF detenido, etc.)
+        setTimeout(cerrar, 2000);
       })();
     </script>
 
@@ -144,7 +153,7 @@ const datos = [tienda, ...jsonld];
     <meta property="og:site_name" content={MARCA.nombre} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
-    <meta property="og:url" content={canonical} />
+    {!noindex && <meta property="og:url" content={canonical} />}
     <meta property="og:image" content={ogUrl} />
     <meta property="og:image:alt" content={ogAlt} />
     <meta name="twitter:card" content="summary_large_image" />

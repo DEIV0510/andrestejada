@@ -5,11 +5,13 @@ import CategoryNavigation from '@/components/CategoryNavigation.astro';
 import ProductGrid from '@/components/ProductGrid.astro';
 import BrandStory from '@/components/BrandStory.astro';
 import InstagramSection from '@/components/InstagramSection.astro';
-import { CATEGORIAS } from '@/data/catalogo';
+import { categoria } from '@/data/catalogo';
 import { pictureData } from '@/lib/media';
 import { HERO_SIZES } from '@/lib/hero';
 
-const [uniformes, accesorios, aviones] = CATEGORIAS;
+const uniformes = categoria('uniformes');
+const accesorios = categoria('accesorios');
+const aviones = categoria('aviones-a-escala');
 const hero = pictureData('alas-piper', 'card');
 ---
 
@@ -23,7 +25,7 @@ const hero = pictureData('alas-piper', 'card');
   <CategoryNavigation />
   <ProductGrid categoria={uniformes} fondo="blanco" filasGrandes lateral />
   <ProductGrid categoria={accesorios} fondo="negro" />
-  <ProductGrid categoria={aviones} fondo="blanco" filasPrimero rotuloTarjetas="Coleccionismo" />
+  <ProductGrid categoria={aviones} fondo="blanco" filasPrimero />
   <BrandStory />
   <InstagramSection />
 </Base>

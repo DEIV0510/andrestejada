@@ -1,8 +1,11 @@
 ---
 // Tarjeta de producto CON foto real. La foto y el nombre llevan a la ficha; «Pedir» abre
-// WhatsApp con el producto (y el acabado elegido) ya escrito. Las variantes son reales:
-// al elegir otro acabado cambia la foto y el mensaje, sin salir del catálogo.
+// WhatsApp con el producto (y la variante elegida) ya escrito. Las variantes son reales:
+// al elegir otro acabado cambia la foto y el mensaje sin salir del catálogo. La foto de la
+// variante no elegida no se descarga hasta que hace falta.
 import Foto from './Foto.astro';
+import Icono from './Icono.astro';
+import Externo from './Externo.astro';
 import { precioTexto, urlFicha, type Producto } from '@/data/catalogo';
 import { waProducto } from '@/lib/whatsapp';
 
@@ -10,34 +13,31 @@ interface Props {
   producto: Producto;
   /** sizes de la foto según la retícula de la sección. */
   sizes: string;
-  /** Proporción del marco: 3:2 (alas) o 4:5 (verticales). */
+  /** Proporción del marco: 3:2 (piezas anchas como las alas) o 4:5 (verticales). */
   formato: 'ancho' | 'vertical';
-  class?: string;
+  /** Posición en la rejilla (escalona el revelado). */
+  orden?: number;
 }
 
-const { producto: p, sizes, formato, class: cls } = Astro.props;
+const { producto: p, sizes, formato, orden = 0 } = Astro.props;
 const ficha = urlFicha(p)!;
 const fichaAbs = new URL(ficha, Astro.site).href;
 const opciones = p.variantes?.opciones ?? [];
 const inicial = opciones[0];
 const href = waProducto({ nombre: p.nombre, variante: inicial?.enMensaje, url: inicial ? `${fichaAbs}?acabado=${inicial.id}` : fichaAbs });
 const precio = precioTexto(p);
-const fotos = opciones.length ? opciones.map((o) => ({ id: o.foto, variante: o.id })) : [{ id: p.foto!, variante: null }];
+const fotos = opciones.length ? opciones.map((o) => ({ id: o.foto, variante: o.id })) : [{ id: p.foto!, variante: null as string | null }];
 ---
 
-<article
-  class:list={['tarjeta', `tarjeta--${formato}`, cls]}
-  data-tarjeta
-  data-nombre={p.nombre}
-  data-ficha={fichaAbs}
->
-  <div class="tarjeta__foto">
+<article class:list={['tarjeta', `tarjeta--${formato}`]} data-tarjeta data-nombre={p.nombre} data-url={fichaAbs}>
+  <div class="tarjeta__foto revela" style={`--orden:${orden}`}>
     {
       fotos.map((f, i) => (
         <Foto
           id={f.id}
           recorte="card"
           sizes={sizes}
+          diferida={i > 0}
           class:list={['tarjeta__img', { 'is-activa': i === 0 }]}
           attrs={f.variante ? { 'data-variante-foto': f.variante } : {}}
         />
@@ -45,33 +45,51 @@ const fotos = opciones.length ? opciones.map((o) => ({ id: o.foto, variante: o.i
     }
   </div>
   <div class="tarjeta__tira">
-    <h3 class="tarjeta__nombre">
-      <a href={ficha} class="tarjeta__enlace" data-tarjeta-ficha><span class="tarjeta__nombre-txt">{p.nombre}</span></a>
-    </h3>
-    {precio && <p class="tarjeta__precio tnum">{precio}</p>}
-    {
-      opciones.length > 0 && (
-        <div class="tarjeta__muestras" role="radiogroup" aria-label={`${p.variantes!.nombre} de ${p.nombre}`} data-variantes>
-          {opciones.map((o, i) => (
-            <button
-              type="button"
-              role="radio"
-              class="muestra"
-              aria-checked={i === 0 ? 'true' : 'false'}
-              tabindex={i === 0 ? 0 : -1}
-              data-variante={o.id}
-              data-en-mensaje={o.enMensaje}
-              style={`--muestra:${o.muestra}`}
-            >
-              <span class="muestra__color" aria-hidden="true" />
-              <span class="visualmente-oculto">{o.nombre}</span>
-            </button>
-          ))}
-        </div>
-      )
-    }
+    <div class="tarjeta__info">
+      <h3 class="tarjeta__nombre">
+        <a href={ficha} class="tarjeta__enlace" data-tarjeta-ficha><span class="tarjeta__recorte">{p.nombre}</span></a>
+      </h3>
+      {
+        opciones.length > 0 ? (
+          <div class="tarjeta__variantes">
+            <div class="tarjeta__muestras" role="radiogroup" aria-label={`${p.variantes!.nombre} de ${p.nombre}`} data-variantes data-param="acabado">
+              {opciones.map((o, i) => (
+                <button
+                  type="button"
+                  role="radio"
+                  class="muestra"
+                  aria-checked={i === 0 ? 'true' : 'false'}
+                  tabindex={i === 0 ? 0 : -1}
+                  data-variante={o.id}
+                  data-nombre={o.nombre}
+                  data-en-mensaje={o.enMensaje}
+                  style={`--muestra:${o.muestra}`}
+                >
+                  <span class="muestra__color" aria-hidden="true" />
+                  <span class="visualmente-oculto">{o.nombre}</span>
+                </button>
+              ))}
+            </div>
+            <span class="tarjeta__variante" aria-hidden="true" data-variante-texto>
+              {inicial!.nombre}
+            </span>
+          </div>
+        ) : (
+          <p class="tarjeta__linea">
+            <span class="tarjeta__recorte">{p.linea}</span>
+          </p>
+        )
+      }
+      {(precio || p.tallas) && (
+        <p class="tarjeta__datos">
+          {precio && <span class="tnum tarjeta__precio">{precio}</span>}
+          {p.tallas && <span>Tallas {p.tallas.join(' · ')}</span>}
+        </p>
+      )}
+    </div>
     <a class="tarjeta__pedir" href={href} target="_blank" rel="noopener" data-pedir>
-      Pedir<span class="visualmente-oculto"> {p.nombre} por WhatsApp</span>
+      <Icono name="whatsapp" size={18} class="tarjeta__pedir-icono" />
+      <span>Pedir</span><span class="visualmente-oculto"> {p.nombre} por WhatsApp</span><Externo tipo="whatsapp" />
     </a>
   </div>
 </article>
@@ -81,6 +99,7 @@ const fotos = opciones.length ? opciones.map((o) => ({ id: o.foto, variante: o.i
     position: relative;
     display: flex;
     flex-direction: column;
+    min-width: 0;
     background: var(--tarjeta-fondo, var(--blanco));
   }
   .tarjeta__foto {
@@ -104,7 +123,7 @@ const fotos = opciones.length ? opciones.map((o) => ({ id: o.foto, variante: o.i
     opacity: 0;
     transition:
       opacity 200ms ease,
-      transform 400ms var(--ease-out);
+      transform 500ms var(--ease-out);
   }
   .tarjeta__img.is-activa {
     opacity: 1;
@@ -123,19 +142,24 @@ const fotos = opciones.length ? opciones.map((o) => ({ id: o.foto, variante: o.i
     }
   }
 
-  /* Tira de pedido: [nombre | PEDIR] */
+  /* ── Tira de pedido: [nombre + línea | PEDIR] ── */
   .tarjeta__tira {
     flex: 1;
     display: flex;
     flex-direction: column;
     border-top: 1px solid var(--hilo-tarjeta, var(--hilo));
   }
+  .tarjeta__info {
+    display: grid;
+    align-content: start;
+    gap: 4px;
+    padding: 14px 14px 12px;
+  }
   .tarjeta__nombre {
-    padding: 14px 16px 12px;
     font: 600 16px/1.2 var(--font-display);
     letter-spacing: -0.01em;
   }
-  .tarjeta__nombre-txt {
+  .tarjeta__recorte {
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
@@ -154,35 +178,57 @@ const fotos = opciones.length ? opciones.map((o) => ({ id: o.foto, variante: o.i
     outline: 2px solid var(--foco, var(--negro));
     outline-offset: -2px;
   }
-  .tarjeta__precio {
-    padding: 0 16px 8px;
-    font-weight: 600;
+  .tarjeta__linea,
+  .tarjeta__datos {
+    font-size: 13px;
+    line-height: 1.4;
+    color: var(--texto-tarjeta, var(--texto-2));
   }
-  .tarjeta__muestras {
+  .tarjeta__datos {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2px 12px;
+  }
+  .tarjeta__precio {
+    font-weight: 600;
+    color: var(--tarjeta-tinta, var(--negro));
+  }
+
+  /* Variantes: muestras + nombre de la elegida (visible) */
+  .tarjeta__variantes {
     position: relative;
     z-index: 1;
     display: flex;
-    gap: 0;
-    padding: 0 6px 6px;
+    align-items: center;
+    gap: 6px;
+    margin-left: -10px;
+  }
+  .tarjeta__muestras {
+    display: flex;
   }
   .muestra {
     display: grid;
     place-items: center;
-    width: 44px;
-    height: 44px;
+    width: 36px;
+    height: 36px;
   }
   .muestra__color {
     width: 14px;
     height: 14px;
     background: var(--muestra);
-    outline: 1px solid var(--hilo-tarjeta, var(--hilo));
-    outline-offset: 0;
-    transition: outline-offset 160ms ease-out;
+    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.35);
+    outline: 1px solid transparent;
+    outline-offset: 3px;
+    transition: outline-color 160ms linear;
   }
   .muestra[aria-checked='true'] .muestra__color {
-    outline: 1px solid currentColor;
-    outline-offset: 3px;
+    outline-color: currentColor;
   }
+  .tarjeta__variante {
+    font-size: 13px;
+    color: var(--texto-tarjeta, var(--texto-2));
+  }
+
   .tarjeta__pedir {
     position: relative;
     z-index: 1;
@@ -190,6 +236,7 @@ const fotos = opciones.length ? opciones.map((o) => ({ id: o.foto, variante: o.i
     display: flex;
     align-items: center;
     justify-content: center;
+    gap: 8px;
     min-height: 44px;
     font: 600 12px/1.2 var(--font-text);
     letter-spacing: 0.12em;
@@ -205,57 +252,62 @@ const fotos = opciones.length ? opciones.map((o) => ({ id: o.foto, variante: o.i
   }
 
   @media (min-width: 768px) {
-    .tarjeta__tira {
-      flex: none;
-      flex-direction: row;
-      align-items: stretch;
-      min-height: 56px;
+    .tarjeta__info {
+      padding: 16px 16px 14px;
     }
     .tarjeta__nombre {
-      flex: 1;
-      min-width: 0;
-    }
-    .tarjeta__nombre {
-      align-self: center;
-      padding: 12px 16px;
       font-size: 17px;
     }
-    .tarjeta__precio {
-      display: none;
+    .tarjeta__pedir {
+      min-height: 48px;
     }
-    .tarjeta__muestras {
-      align-self: center;
-      padding: 0 4px;
+  }
+  /* Escritorio: [nombre + línea | PEDIR] en una fila */
+  @media (min-width: 1024px) {
+    .tarjeta__tira {
+      flex-direction: row;
+      align-items: stretch;
+    }
+    .tarjeta__info {
+      flex: 1;
+      min-width: 0;
+      min-height: 88px;
     }
     .tarjeta__pedir {
       flex: none;
+      flex-direction: column;
+      gap: 6px;
+      width: 88px;
       margin-top: 0;
-      width: 96px;
-      min-height: 56px;
       border-left: 1px solid var(--hilo-tarjeta, var(--hilo));
     }
   }
-  @media (min-width: 1024px) {
+  @media (min-width: 1280px) {
     .tarjeta__nombre {
       font-size: 18px;
     }
+    .tarjeta__pedir {
+      width: 100px;
+    }
   }
 
-  /* Sobre fondo negro: contorno claro; al pasar el cursor, dorado. */
+  /* Sobre fondo negro: tira negra; PEDIR con contorno que se llena de dorado. */
   :global(.sup-negro) .tarjeta {
     --tarjeta-fondo: var(--negro);
     --hilo-tarjeta: var(--gris);
+    --texto-tarjeta: var(--texto-2-osc);
+    --tarjeta-tinta: var(--blanco);
   }
   :global(.sup-negro) .tarjeta__pedir {
     background: transparent;
     color: var(--blanco);
-    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.24);
+    box-shadow: inset 0 1px 0 var(--gris);
   }
   :global(.sup-negro) .tarjeta__pedir:hover {
     background: var(--dorado);
     color: var(--negro);
   }
-  @media (min-width: 768px) {
+  @media (min-width: 1024px) {
     :global(.sup-negro) .tarjeta__pedir {
       box-shadow: none;
     }

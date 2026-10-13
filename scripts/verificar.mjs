@@ -63,7 +63,7 @@ for (const archivo of paginas) {
   for (const [, src] of html.matchAll(/\s(?:src|href)="(\/[^"]+\.(?:webp|avif|png|jpg|svg|woff2|webmanifest|ico))"/g)) {
     if (!existe(src)) err(rel, `recurso inexistente: ${src}`);
   }
-  for (const [, set] of html.matchAll(/\s(?:srcset|imagesrcset)="([^"]+)"/g)) {
+  for (const [, set] of html.matchAll(/\s(?:srcset|imagesrcset|data-srcset)="([^"]+)"/g)) {
     for (const parte of set.split(',')) {
       const [url, w] = parte.trim().split(/\s+/);
       if (!existe(url)) {
@@ -75,7 +75,8 @@ for (const archivo of paginas) {
     }
   }
   for (const [img] of html.matchAll(/<img\b[^>]*>/g)) {
-    if (!/\salt="/.test(img)) err(rel, `imagen sin alt: ${img.slice(0, 80)}`);
+    // alt vacío (imagen decorativa) sale como «alt» o alt="": ambos son válidos.
+    if (!/\salt(="|[\s>])/.test(img)) err(rel, `imagen sin alt: ${img.slice(0, 80)}`);
     if (!/\swidth="\d+"/.test(img) || !/\sheight="\d+"/.test(img)) err(rel, `imagen sin width/height: ${img.slice(0, 80)}`);
   }
 }
@@ -87,8 +88,9 @@ const mensajes = [...portada.matchAll(/href="https:\/\/wa\.me\/[^"?]+\?text=([^"
 const { PRODUCTOS } = await import('../src/data/catalogo.ts');
 {
   for (const p of PRODUCTOS) {
-    const nombre = p.mensaje ? 'aviones a escala' : p.nombre;
-    if (!mensajes.some((m) => m.toLowerCase().includes(nombre.toLowerCase()))) err('index.html', `ningún mensaje de WhatsApp nombra «${p.nombre}»`);
+    // Con mensaje propio se busca ese texto exacto; si no, el nombre del producto.
+    const buscado = (p.mensaje ?? p.nombre).toLowerCase();
+    if (!mensajes.some((m) => m.toLowerCase().includes(buscado))) err('index.html', `ningún mensaje de WhatsApp corresponde a «${p.nombre}»`);
   }
 }
 

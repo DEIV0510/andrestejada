@@ -1,0 +1,92 @@
+---
+// Selector de opciones reales de un producto (acabado, talla). Funciona como radiogroup:
+// flechas del teclado y aria-checked. El script compone el mensaje de WhatsApp con todas
+// las opciones elegidas; si el grupo tiene `param`, también actualiza la URL (?acabado=)
+// y cambia la foto de la variante.
+interface Opcion {
+  id: string;
+  nombre: string;
+  enMensaje: string;
+  muestra?: string;
+}
+interface Props {
+  nombre: string;
+  producto: string;
+  opciones: Opcion[];
+  /** Parámetro de URL que guarda la elección (solo variantes con foto). */
+  param?: string;
+  /** Primera opción ya elegida (acabado); las tallas empiezan sin elegir. */
+  preseleccion?: boolean;
+}
+const { nombre, producto, opciones, param, preseleccion = true } = Astro.props;
+---
+
+<fieldset class="selector">
+  <legend class="rotulo selector__t">{nombre}</legend>
+  <div class="selector__opciones" role="radiogroup" aria-label={`${nombre} de ${producto}`} data-variantes data-param={param}>
+    {
+      opciones.map((o, i) => (
+        <button
+          type="button"
+          role="radio"
+          class="selector__op"
+          aria-checked={preseleccion && i === 0 ? 'true' : 'false'}
+          tabindex={i === 0 ? 0 : -1}
+          data-variante={o.id}
+          data-nombre={o.nombre}
+          data-en-mensaje={o.enMensaje}
+        >
+          {o.muestra && <span class="selector__muestra" style={`background:${o.muestra}`} aria-hidden="true" />}
+          {o.nombre}
+        </button>
+      ))
+    }
+  </div>
+</fieldset>
+
+<style>
+  .selector {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    min-width: 0;
+  }
+  .selector__t {
+    padding: 0;
+    margin-bottom: 10px;
+    color: var(--texto-2);
+  }
+  .selector__opciones {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .selector__op {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 120px;
+    min-height: 44px;
+    padding: 0 16px;
+    border: 1px solid var(--negro);
+    font-weight: 500;
+    transition:
+      background-color 160ms linear,
+      color 160ms linear;
+  }
+  .selector__op:hover {
+    background: var(--hover-claro);
+  }
+  .selector__op[aria-checked='true'] {
+    background: var(--negro);
+    color: var(--blanco);
+  }
+  .selector__muestra {
+    width: 12px;
+    height: 12px;
+    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.35);
+  }
+  .selector__op[aria-checked='true'] .selector__muestra {
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.5);
+  }
+</style>

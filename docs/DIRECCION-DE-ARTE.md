@@ -168,7 +168,7 @@ La web se viste como un uniforme. El negro es el saco, el blanco es la camisa do
 - **Móvil:** alto mínimo de 64 px, el nombre y la línea apilados, y «PEDIR →» a la derecha.
 - Hover: fondo #F3F3F3 o #141414, y la flecha avanza 4 px.
 - Sin recuadros, iconos, siluetas, ilustraciones ni «imagen próximamente».
-- **Cuando llegue una foto real:** en `src/data/productos.ts`, `foto: null` pasa a ser el archivo y el producto se convierte en tarjeta. No hay que tocar la retícula.
+- **Cuando llegue una foto real:** en `src/data/catalogo.ts`, `foto: null` pasa a ser el archivo y el producto se convierte en tarjeta. No hay que tocar la retícula.
 
 **Marca** (fondo negro; relleno vertical de 128 px en escritorio y 80 en móvil; columnas 1–8)
 - Presilla de 4 galones (96 px), rótulo, H2 en 2 líneas y botón dorado.
@@ -193,7 +193,7 @@ La web se viste como un uniforme. El negro es el saco, el blanco es la camisa do
 - Es un `<a target=_blank rel=noopener>`; nunca window.open.
 
 ## 4. Fichas (solo los 5 productos con foto)
-**Rutas:** /catalogo/alas-piper, /catalogo/alas-cessna, /catalogo/pin-avion-metalico, /catalogo/pin-avion-esmaltado y /catalogo/llavero-remove-before-flight. Los productos sin foto no tienen ficha.
+**Rutas:** /catalogo/alas-de-piloto-piper/, /catalogo/alas-de-piloto-cessna/, /catalogo/pin-avion-metalico, /catalogo/pin-avion-esmaltado y /catalogo/llavero-remove-before-flight. Los productos sin foto no tienen ficha.
 
 **Escritorio**
 - Foto en las columnas 1–7: 4:5, salvo las alas, que van en 3:2 sobre blanco.

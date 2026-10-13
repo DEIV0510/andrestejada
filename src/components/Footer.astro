@@ -4,6 +4,7 @@
 // no existen documentos legales todavía.
 import Logo from './Logo.astro';
 import Icono from './Icono.astro';
+import Externo from './Externo.astro';
 import { CATEGORIAS } from '@/data/catalogo';
 import { INSTAGRAM, MARCA, WHATSAPP_VISIBLE } from '@/lib/contacto';
 import { MENSAJE_GENERAL, waUrl } from '@/lib/whatsapp';
@@ -16,15 +17,16 @@ const wa = waUrl(MENSAJE_GENERAL);
   <div class="contenedor">
     <div class="pie__llamado">
       <h2 id="pie-titulo" class="pie__titulo">Pedidos y consultas por WhatsApp</h2>
-      <a class="btn btn--oro" href={wa} target="_blank" rel="noopener">
+      <!-- Con contorno: el dorado queda para el CTA principal de cada pantalla -->
+      <a class="btn btn--contorno" href={wa} target="_blank" rel="noopener">
         <Icono name="whatsapp" size={18} />
-        Escribir por WhatsApp
+        Escribir por WhatsApp<Externo tipo="whatsapp" />
       </a>
     </div>
 
     <div class="pie__reticula">
       <div class="pie__marca">
-        <a href="/#inicio" aria-label="Andrés Tejada Aviation Shop, inicio">
+        <a href="/#inicio" class="pie__logo-enlace" aria-label="Andrés Tejada Aviation Shop, inicio">
           <Logo version="compacto" alto={36} decorativo class="pie__logo" />
         </a>
         <p class="rotulo pie__lema">Uniformes • Accesorios • Aviones a escala</p>
@@ -49,13 +51,13 @@ const wa = waUrl(MENSAJE_GENERAL);
           <li>
             <a href={wa} target="_blank" rel="noopener" class="pie__dato">
               <Icono name="whatsapp" size={18} />
-              <span class="tnum">{WHATSAPP_VISIBLE}</span>
+              <span class="tnum">{WHATSAPP_VISIBLE}</span><Externo tipo="whatsapp" />
             </a>
           </li>
           <li>
             <a href={INSTAGRAM.url} target="_blank" rel="noopener" class="pie__dato">
               <Icono name="instagram" size={18} />
-              @{INSTAGRAM.usuario}
+              @{INSTAGRAM.usuario}<Externo />
             </a>
           </li>
           <li class="pie__nota">{MARCA.tienda} · {MARCA.envios}</li>
@@ -95,6 +97,11 @@ const wa = waUrl(MENSAJE_GENERAL);
     gap: 14px;
     justify-items: start;
     align-content: start;
+  }
+  .pie__logo-enlace {
+    display: flex;
+    align-items: center;
+    min-height: 44px;
   }
   .pie__logo {
     height: 30px;

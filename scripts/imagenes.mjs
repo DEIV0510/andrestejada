@@ -10,7 +10,7 @@ import todas, { WIDTHS } from './imagenes.config.mjs';
 
 const OUT = 'public/img';
 const MANIFEST = 'src/data/media.json';
-const MAXIMO = { full: 1080, card: 1200 };
+const MAXIMO = { full: 1080, card: 1200, detalle: 720 };
 const solo = process.argv.slice(2);
 const fotos = solo.length ? todas.filter((f) => solo.includes(f.id)) : todas;
 if (solo.length) {

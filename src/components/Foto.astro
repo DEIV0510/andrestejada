@@ -1,6 +1,8 @@
 ---
 // <picture> con AVIF + WebP, anchos reales y dimensiones explícitas (sin saltos).
 // El marco toma el color de fondo real de la foto mientras carga.
+// diferida: la foto no se descarga hasta que el script la pide (variantes no elegidas);
+// queda fuera del árbol accesible mientras no esté activa.
 import type { MediaId } from '@/data/catalogo';
 import { pictureData, type Recorte } from '@/lib/media';
 
@@ -11,19 +13,24 @@ interface Props {
   alt?: string;
   /** Imagen del primer pantallazo (LCP): carga inmediata y prioridad alta. */
   priority?: boolean;
+  diferida?: boolean;
   class?: string;
+  /** Atributos extra para el <picture>. */
   attrs?: Record<string, string>;
+  /** Atributos extra para el <img>. */
+  imgAttrs?: Record<string, string>;
 }
 
-const { id, sizes, recorte = 'card', alt, priority = false, class: cls, attrs = {} } = Astro.props;
+const { id, sizes, recorte = 'card', alt, priority = false, diferida = false, class: cls, attrs = {}, imgAttrs = {} } = Astro.props;
 const d = pictureData(id, recorte);
+const src = (v: string) => (diferida ? { 'data-srcset': v } : { srcset: v });
 ---
 
-<picture class:list={['foto', cls]} style={`--foto-bg:${d.bg}`}>
-  <source type="image/avif" srcset={d.avif} sizes={sizes} />
-  <source type="image/webp" srcset={d.webp} sizes={sizes} />
+<picture class:list={['foto', cls]} style={`--foto-bg:${d.bg}`} aria-hidden={diferida ? 'true' : undefined} {...attrs}>
+  <source type="image/avif" {...src(d.avif)} sizes={sizes} />
+  <source type="image/webp" {...src(d.webp)} sizes={sizes} />
   <img
-    src={d.src}
+    {...diferida ? { 'data-src': d.src } : { src: d.src }}
     width={d.width}
     height={d.height}
     alt={alt ?? d.alt}
@@ -31,6 +38,6 @@ const d = pictureData(id, recorte);
     decoding={priority ? 'sync' : 'async'}
     fetchpriority={priority ? 'high' : undefined}
     onerror="this.closest('picture')?.classList.add('foto--error')"
-    {...attrs}
+    {...imgAttrs}
   />
 </picture>

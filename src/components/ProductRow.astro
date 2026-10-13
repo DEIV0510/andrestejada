@@ -3,6 +3,7 @@
 // abre WhatsApp pidiendo fotos, precio, tallas y envío. Nada de siluetas ni «próximamente».
 // Cuando llegue una foto real (campo `foto` en el catálogo), el producto pasa a tarjeta.
 import Icono from './Icono.astro';
+import Externo from './Externo.astro';
 import { precioTexto, type Producto } from '@/data/catalogo';
 import { waProducto, waUrl } from '@/lib/whatsapp';
 
@@ -14,6 +15,8 @@ interface Props {
 const { producto: p, grande = false } = Astro.props;
 const href = p.mensaje ? waUrl(p.mensaje) : waProducto({ nombre: p.nombre, sinFoto: true });
 const precio = precioTexto(p);
+const accion = p.accion ?? 'Pedir por WhatsApp';
+const corta = p.accion ? p.accion.split(' ')[0] : 'Pedir';
 ---
 
 <li class:list={['fila', { 'fila--grande': grande }]}>
@@ -23,14 +26,15 @@ const precio = precioTexto(p);
       <span class="fila__linea">
         {p.linea}
         {precio && <span class="fila__precio tnum">{precio}</span>}
-        {p.tallas && <span class="fila__tallas">Tallas: {p.tallas.join(' · ')}</span>}
+        {p.tallas && <span class="fila__tallas">Tallas {p.tallas.join(' · ')}</span>}
       </span>
     </span>
     <span class="fila__accion rotulo">
-      <span class="fila__accion-texto">{p.accion ?? 'Pedir por WhatsApp'}</span>
-      <span class="fila__accion-corta" aria-hidden="true">Pedir</span>
+      <Icono name="whatsapp" size={16} class="fila__wa" />
+      <span class="fila__accion-texto">{accion}</span>
+      <span class="fila__accion-corta" aria-hidden="true">{corta}</span>
       <Icono name="flecha" size={16} class="flecha" />
-      <span class="visualmente-oculto">(se abre WhatsApp)</span>
+      <Externo tipo="whatsapp" />
     </span>
   </a>
 </li>
@@ -105,16 +109,16 @@ const precio = precioTexto(p);
       display: none;
     }
     .fila--grande .fila__enlace {
-      min-height: 136px;
+      min-height: 128px;
     }
     .fila--grande .fila__nombre {
-      font-size: 34px;
+      font-size: 32px;
       font-weight: 700;
     }
   }
   @media (min-width: 1024px) {
     .fila--grande .fila__nombre {
-      font-size: 40px;
+      font-size: clamp(30px, 2.6vw, 38px);
     }
   }
 </style>

@@ -1,0 +1,9 @@
+---
+// Aviso para lectores de pantalla en enlaces que salen del sitio (target="_blank").
+interface Props {
+  tipo?: 'whatsapp' | 'pestana';
+}
+const { tipo = 'pestana' } = Astro.props;
+---
+
+<span class="visualmente-oculto">{tipo === 'whatsapp' ? ' (abre WhatsApp en otra pestaña)' : ' (se abre en otra pestaña)'}</span>

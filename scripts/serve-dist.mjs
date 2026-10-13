@@ -1,4 +1,7 @@
-// Servidor estático mínimo para revisar dist/ tal como quedará publicado.
+// Servidor estático mínimo para revisar dist/ tal como quedará publicado (Vercel):
+// - /catalogo/x → 308 a /catalogo/x/ (trailingSlash)
+// - Archivos con hash (_astro, img, fonts): caché inmutable de un año; HTML: sin caché.
+// - Brotli para texto.
 // Uso: node scripts/serve-dist.mjs [puerto]   (por defecto 5501)
 import http from 'node:http';
 import fs from 'node:fs';
@@ -13,6 +16,7 @@ const types = {
   '.js': 'text/javascript; charset=utf-8',
   '.css': 'text/css; charset=utf-8',
   '.json': 'application/json; charset=utf-8',
+  '.webmanifest': 'application/manifest+json; charset=utf-8',
   '.xml': 'application/xml; charset=utf-8',
   '.txt': 'text/plain; charset=utf-8',
   '.svg': 'image/svg+xml',
@@ -23,30 +27,35 @@ const types = {
   '.woff2': 'font/woff2',
   '.ico': 'image/x-icon',
 };
+const INMUTABLE = /^\/(_astro|img|fonts)\//;
 
 http
   .createServer((req, res) => {
     const url = new URL(req.url || '/', 'http://localhost');
-    let file = path.join(root, decodeURIComponent(url.pathname));
+    const ruta = decodeURIComponent(url.pathname);
+    let file = path.join(root, ruta);
     if (!file.startsWith(root)) {
       res.writeHead(403).end();
       return;
     }
-    if (fs.existsSync(file) && fs.statSync(file).isDirectory()) file = path.join(file, 'index.html');
+    const esDir = fs.existsSync(file) && fs.statSync(file).isDirectory();
+    if (esDir && !ruta.endsWith('/')) {
+      res.writeHead(308, { Location: `${url.pathname}/${url.search}` }).end();
+      return;
+    }
+    if (esDir) file = path.join(file, 'index.html');
     let status = 200;
     if (!fs.existsSync(file)) {
-      // /catalogo/x → /catalogo/x/ como en Vercel con trailingSlash
-      if (!url.pathname.endsWith('/') && fs.existsSync(path.join(root, url.pathname, 'index.html'))) {
-        res.writeHead(308, { Location: `${url.pathname}/${url.search}` }).end();
-        return;
-      }
       file = path.join(root, '404.html');
       status = 404;
     }
     const ext = path.extname(file);
     const body = fs.readFileSync(file);
-    const headers = { 'Content-Type': types[ext] || 'application/octet-stream', 'Cache-Control': 'no-cache' };
-    const compressible = /\.(html|js|css|json|xml|txt|svg)$/.test(ext);
+    const headers = {
+      'Content-Type': types[ext] || 'application/octet-stream',
+      'Cache-Control': status === 200 && INMUTABLE.test(ruta) ? 'public, max-age=31536000, immutable' : 'no-cache',
+    };
+    const compressible = /\.(html|js|css|json|xml|txt|svg|webmanifest)$/.test(ext);
     if (compressible && /\bbr\b/.test(req.headers['accept-encoding'] || '')) {
       res.writeHead(status, { ...headers, 'Content-Encoding': 'br' });
       res.end(zlib.brotliCompressSync(body));

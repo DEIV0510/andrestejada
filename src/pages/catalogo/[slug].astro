@@ -1,12 +1,13 @@
 ---
 // Ficha de producto: solo para los productos con foto real. Foto grande, una línea,
-// variantes reales y el pedido por WhatsApp con el producto (y acabado) ya escrito.
+// opciones reales (acabado, talla) y el pedido por WhatsApp con todo ya escrito.
 import Base from '@/layouts/Base.astro';
 import Foto from '@/components/Foto.astro';
 import Icono from '@/components/Icono.astro';
-import SelectorAcabado from '@/components/SelectorAcabado.astro';
+import Externo from '@/components/Externo.astro';
+import SelectorOpciones from '@/components/SelectorOpciones.astro';
 import { categoriaDe, conFicha, precioTexto, PRODUCTOS, urlFicha, type Producto } from '@/data/catalogo';
-import { imagenOG, pictureData } from '@/lib/media';
+import { getMedia, imagenOG, pictureData } from '@/lib/media';
 import { waProducto } from '@/lib/whatsapp';
 
 export function getStaticPaths() {
@@ -23,12 +24,19 @@ const fichaAbs = new URL(ficha, Astro.site).href;
 const opciones = p.variantes?.opciones ?? [];
 const inicial = opciones[0];
 const href = waProducto({ nombre: p.nombre, variante: inicial?.enMensaje, url: inicial ? `${fichaAbs}?acabado=${inicial.id}` : fichaAbs });
-const ancha = p.foto!.startsWith('alas-');
-const fotos = opciones.length ? opciones.map((o) => ({ id: o.foto, variante: o.id })) : [{ id: p.foto!, variante: null as string | null }];
-const SIZES = ancha ? '(min-width: 1024px) 680px, (min-width: 768px) calc(100vw - 80px), 100vw' : '(min-width: 768px) 560px, 100vw';
+const card = getMedia(p.foto!).crops.card;
+const ancha = card.w / card.h >= 1.4;
+const conVariantes = opciones.length > 1;
+const fotos = conVariantes ? opciones.map((o) => ({ id: o.foto, variante: o.id })) : [{ id: p.foto!, variante: null as string | null }];
+const SIZES = ancha ? '(min-width: 1328px) 700px, (min-width: 1024px) calc(58vw - 64px), (min-width: 768px) calc(100vw - 80px), 100vw' : '(min-width: 768px) 560px, 100vw';
 const lcp = pictureData(fotos[0].id, 'card');
 const precio = precioTexto(p);
 const otros = PRODUCTOS.filter((x) => x.id !== p.id && x.foto && x.categoria === p.categoria);
+const nota = precio == null ? 'Disponibilidad y valor se confirman por WhatsApp.' : 'Disponibilidad y envío se confirman por WhatsApp.';
+
+// Con variantes, la foto elegida se activa con un script en línea antes del primer pintado
+// (lee ?acabado=): así no se descarga la variante que no se ve.
+const activador = `(function(){var c=document.currentScript.previousElementSibling,q=new URLSearchParams(location.search).get('acabado'),f=c.querySelectorAll('[data-variante-foto]'),e=f[0];for(var i=0;i<f.length;i++)if(f[i].getAttribute('data-variante-foto')===q)e=f[i];for(var j=0;j<f.length;j++)f[j].classList.toggle('is-activa',f[j]===e);e.removeAttribute('aria-hidden');var m=e.querySelector('img');m.setAttribute('fetchpriority','high');m.setAttribute('loading','eager');e.querySelectorAll('[data-srcset]').forEach(function(s){s.setAttribute('srcset',s.getAttribute('data-srcset'));s.removeAttribute('data-srcset')});if(m.getAttribute('data-src')){m.src=m.getAttribute('data-src');m.removeAttribute('data-src')}})();`;
 
 const migas = {
   '@context': 'https://schema.org',
@@ -43,10 +51,10 @@ const migas = {
 
 <Base
   title={`${p.nombre} | Andrés Tejada Aviation Shop`}
-  description={`${p.linea} Pídelo por WhatsApp. Envíos a toda Colombia.`}
+  description={`${p.linea} Pedidos por WhatsApp y envíos a toda Colombia.`}
   og={imagenOG(p.foto!)}
   ogAlt={lcp.alt}
-  preload={{ srcset: lcp.avif, sizes: SIZES }}
+  preload={conVariantes ? null : { srcset: lcp.avif, sizes: SIZES }}
   jsonld={[migas]}
   flotante={false}
 >
@@ -59,29 +67,47 @@ const migas = {
               id={f.id}
               recorte="card"
               sizes={SIZES}
-              priority={i === 0}
+              priority={!conVariantes}
+              diferida={conVariantes}
               class:list={['ficha__img', { 'is-activa': i === 0 }]}
               attrs={f.variante ? { 'data-variante-foto': f.variante } : {}}
             />
           ))
         }
+        {
+          conVariantes && (
+            <noscript>
+              <Foto id={fotos[0].id} recorte="card" sizes={SIZES} priority class="ficha__img is-activa" />
+            </noscript>
+          )
+        }
       </div>
+      {conVariantes && <script is:inline set:html={activador} />}
 
       <div class="ficha__info">
         <nav aria-label="Ruta" class="ficha__migas rotulo">
           <a href={`/#${cat.id}`}>{cat.nombre}</a>
-          <span aria-hidden="true">/</span>
-          <span aria-current="page">{p.nombre}</span>
+          <span class="ficha__migas-actual"><span aria-hidden="true">/ </span><span aria-current="page">{p.nombre}</span></span>
         </nav>
         <h1 class="ficha__titulo">{p.nombre}</h1>
         <p class="ficha__linea">{p.linea}</p>
         {precio && <p class="ficha__precio tnum">{precio}</p>}
-        {p.variantes && <SelectorAcabado producto={p} />}
-        <p class="ficha__nota texto-2">Disponibilidad y valor se confirman por WhatsApp. Envíos a toda Colombia.</p>
-        <div class="ficha__barra">
+        {p.variantes && <SelectorOpciones nombre={p.variantes.nombre} producto={p.nombre} opciones={p.variantes.opciones} param="acabado" />}
+        {
+          p.tallas && (
+            <SelectorOpciones
+              nombre="Talla"
+              producto={p.nombre}
+              opciones={p.tallas.map((t) => ({ id: t, nombre: t, enMensaje: `talla ${t}` }))}
+              preseleccion={false}
+            />
+          )
+        }
+        <p class="ficha__nota texto-2">{nota} Envíos a toda Colombia.</p>
+        <div class="ficha__barra sup-negro">
           <a class="btn btn--oro ficha__cta" href={href} target="_blank" rel="noopener" data-pedir>
             <Icono name="whatsapp" size={18} />
-            Pedir por WhatsApp
+            Pedir por WhatsApp<Externo tipo="whatsapp" />
           </a>
         </div>
         <a class="ficha__volver" href={`/#${cat.id}`}>
@@ -112,9 +138,12 @@ const migas = {
 
 <style>
   @media (max-width: 1023.98px) {
-    /* la barra fija de pedido no tapa el final del footer */
+    /* La barra fija de pedido no tapa el final del footer ni el elemento enfocado. */
     :global(body) {
       padding-bottom: calc(64px + env(safe-area-inset-bottom));
+    }
+    :global(html) {
+      scroll-padding-bottom: calc(72px + env(safe-area-inset-bottom));
     }
   }
   .ficha {
@@ -126,7 +155,7 @@ const migas = {
   }
   .ficha__foto {
     display: grid;
-    aspect-ratio: 1;
+    aspect-ratio: 4 / 3;
     overflow: hidden;
     background: var(--blanco);
   }
@@ -148,6 +177,7 @@ const migas = {
   }
   .ficha__foto:not(.ficha__foto--ancha) .ficha__img :global(img) {
     object-fit: cover;
+    object-position: 50% 58%;
   }
   .ficha__foto--ancha .ficha__img {
     width: 88%;
@@ -162,12 +192,19 @@ const migas = {
   .ficha__migas {
     display: flex;
     flex-wrap: wrap;
-    gap: 8px;
+    align-items: center;
+    column-gap: 8px;
     color: var(--texto-2);
   }
   .ficha__migas a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 32px;
     text-decoration: underline;
     text-underline-offset: 3px;
+  }
+  .ficha__migas-actual {
+    white-space: nowrap;
   }
   .ficha__titulo {
     font: 700 30px/1.05 var(--font-display);
@@ -183,7 +220,7 @@ const migas = {
   .ficha__nota {
     font-size: 14px;
   }
-  /* Móvil: la acción queda fija abajo */
+  /* Móvil y tablet: la acción queda fija abajo, sobre negro (foco dorado claro) */
   .ficha__barra {
     position: fixed;
     left: 0;
@@ -191,7 +228,6 @@ const migas = {
     bottom: 0;
     z-index: 50;
     padding: 8px var(--margen) calc(8px + env(safe-area-inset-bottom));
-    background: var(--negro);
   }
   .ficha__cta {
     width: 100%;
@@ -230,10 +266,15 @@ const migas = {
     .ficha__reticula {
       padding-inline: var(--margen);
       gap: 32px;
+      justify-items: center;
     }
     .ficha__foto {
       aspect-ratio: 4 / 5;
+      width: 100%;
       max-width: 560px;
+    }
+    .ficha__foto:not(.ficha__foto--ancha) .ficha__img :global(img) {
+      object-position: 50% 50%;
     }
     .ficha__foto--ancha {
       aspect-ratio: 3 / 2;
@@ -241,7 +282,13 @@ const migas = {
       border: 1px solid var(--hilo);
     }
     .ficha__info {
+      width: 100%;
+      max-width: 560px;
       padding: 0;
+    }
+    .ficha__foto--ancha + .ficha__info,
+    .ficha__foto--ancha ~ .ficha__info {
+      max-width: none;
     }
     .ficha__titulo {
       font-size: 44px;
@@ -253,13 +300,13 @@ const migas = {
       padding-bottom: var(--seccion-y);
     }
     .ficha__reticula {
-      grid-template-columns: repeat(12, 1fr);
+      grid-template-columns: repeat(12, minmax(0, 1fr));
       column-gap: 24px;
       align-items: start;
+      justify-items: stretch;
     }
     .ficha__foto {
       grid-column: 1 / span 6;
-      width: 100%;
       max-width: min(100%, calc((100svh - var(--header-h) - 64px) * 0.8));
     }
     .ficha__foto--ancha {
@@ -268,6 +315,7 @@ const migas = {
     }
     .ficha__info {
       grid-column: 8 / span 5;
+      max-width: none;
       position: sticky;
       top: calc(var(--header-h) + 32px);
       gap: 20px;
@@ -280,6 +328,8 @@ const migas = {
       width: 100%;
       padding: 8px 0 0;
       background: none;
+      color: inherit;
+      --foco: var(--negro);
     }
     .ficha__cta {
       min-height: 56px;

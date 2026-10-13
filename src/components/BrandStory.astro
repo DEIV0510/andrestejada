@@ -1,9 +1,11 @@
 ---
-// Marca: la presilla de cuatro galones (las cuatro franjas del emblema), el mensaje en
-// dos líneas, una foto real y la franja de envíos. Sin párrafos, sin cifras inventadas.
+// Marca: la presilla de cuatro galones (las cuatro franjas del emblema), el mensaje en dos
+// líneas con una frase breve, una foto real que no se repite en el catálogo (el acabado
+// plateado) y la franja de envíos. Sin cifras ni avales inventados.
 import Presilla from './Presilla.astro';
 import Foto from './Foto.astro';
 import Icono from './Icono.astro';
+import Externo from './Externo.astro';
 import ShippingBenefits from './ShippingBenefits.astro';
 import { MENSAJE_GENERAL, waUrl } from '@/lib/whatsapp';
 ---
@@ -16,21 +18,23 @@ import { MENSAJE_GENERAL, waUrl } from '@/lib/whatsapp';
       <h2 id="marca-titulo" class="marca__titulo">
         Más que un uniforme. <span class="marca__linea2">Una forma de representar tu vocación.</span>
       </h2>
+      <p class="marca__frase">Uniformes, alas y accesorios para estudiantes, pilotos y apasionados por la aviación.</p>
       <a class="btn btn--oro marca__cta" href={waUrl(MENSAJE_GENERAL)} target="_blank" rel="noopener">
         <Icono name="whatsapp" size={18} />
-        Comprar por WhatsApp
+        Comprar por WhatsApp<Externo tipo="whatsapp" />
       </a>
     </div>
     <figure class="marca__foto">
-      <a href="/catalogo/pin-avion-metalico/" class="marca__enlace" aria-label="Ver el pin avión metálico">
+      <a href="/catalogo/pin-avion-metalico/?acabado=plateado" class="marca__enlace revela">
         <Foto
-          id="pin-avion-dorado"
+          id="pin-avion-plateado"
           recorte="full"
-          sizes="(min-width: 1264px) 384px, (min-width: 1024px) 31vw, (min-width: 768px) 40vw, calc(100vw - 32px)"
+          sizes="(min-width: 1328px) 384px, (min-width: 1024px) calc(33.3vw - 43px), (min-width: 768px) 40vw, calc(100vw - 32px)"
           class="marca__img"
+          alt="Pin avión metálico en acabado plateado sobre tela gris"
         />
       </a>
-      <figcaption class="rotulo marca__pie">Pin avión metálico · acabado dorado</figcaption>
+      <figcaption class="rotulo marca__pie">Pin avión metálico · acabado plateado</figcaption>
     </figure>
     <div class="marca__envios">
       <ShippingBenefits />
@@ -63,12 +67,19 @@ import { MENSAJE_GENERAL, waUrl } from '@/lib/whatsapp';
     display: block;
     color: var(--texto-2-osc);
   }
+  .marca__frase {
+    max-width: 44ch;
+    color: var(--texto-2-osc);
+  }
   .marca__cta {
-    margin-top: 8px;
+    margin-top: 4px;
   }
   .marca__foto {
     position: relative;
-    max-width: 360px;
+    max-width: 420px;
+  }
+  .marca__enlace {
+    display: block;
   }
   .marca__img {
     aspect-ratio: 4 / 3;
@@ -84,18 +95,18 @@ import { MENSAJE_GENERAL, waUrl } from '@/lib/whatsapp';
 
   @media (min-width: 768px) {
     .marca__reticula {
-      grid-template-columns: 1fr minmax(260px, 40%);
-      align-items: end;
+      grid-template-columns: minmax(0, 1fr) minmax(240px, 36%);
+      align-items: center;
       column-gap: 48px;
     }
     .marca__envios {
       grid-column: 1 / -1;
     }
     .marca__titulo {
-      font-size: 44px;
+      font-size: 40px;
     }
     .marca__img {
-      aspect-ratio: 3 / 4;
+      aspect-ratio: 4 / 5;
     }
   }
   @media (min-width: 1024px) {
@@ -103,18 +114,13 @@ import { MENSAJE_GENERAL, waUrl } from '@/lib/whatsapp';
       padding-block: 128px;
     }
     .marca__reticula {
-      grid-template-columns: repeat(12, 1fr);
+      grid-template-columns: repeat(12, minmax(0, 1fr));
       column-gap: 24px;
-      row-gap: 64px;
-    }
-    .marca__texto {
-      gap: 24px;
-    }
-    .marca__reticula {
-      align-items: center;
+      row-gap: 72px;
     }
     .marca__texto {
       grid-column: 1 / span 7;
+      gap: 24px;
     }
     .marca__titulo {
       font-size: 52px;
@@ -123,9 +129,6 @@ import { MENSAJE_GENERAL, waUrl } from '@/lib/whatsapp';
     .marca__foto {
       grid-column: 9 / span 4;
       max-width: none;
-    }
-    .marca__img {
-      aspect-ratio: 4 / 5;
     }
   }
 </style>

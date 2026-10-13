@@ -18,13 +18,11 @@
   --hilo-osc: #3a3a3a;
   --hover-claro: #f3f3f3;
   --hover-osc: #141414;
-  --plateado: #bfc3c7;
   --logo-oro: #d49c00; /* oro del logo original: solo dentro del logo */
 
   /* Retícula */
   --contenedor: 1200px;
   --margen: 16px;
-  --medianil: 12px;
   --header-h: 56px;
   --seccion-y: 56px;
 
@@ -38,7 +36,6 @@
 @media (min-width: 768px) {
   :root {
     --margen: 40px;
-    --medianil: 24px;
     --seccion-y: 80px;
   }
 }
@@ -268,13 +265,6 @@ button {
 .btn--oro::before {
   background: var(--dorado-claro);
 }
-.btn--negro {
-  background: var(--negro);
-  color: var(--blanco);
-}
-.btn--negro::before {
-  background: #262626;
-}
 .btn--contorno {
   color: currentColor;
   border-color: color-mix(in srgb, currentColor 40%, transparent);
@@ -313,9 +303,10 @@ button {
   opacity: 0;
 }
 
-/* Secciones con ancla: compensa la cabecera fija (solo scroll-margin, sin scroll-padding) */
-[data-ancla] {
-  scroll-margin-top: var(--header-h);
+/* La cabecera fija no tapa ni el destino de un ancla ni el elemento enfocado con el
+   teclado (WCAG 2.4.11). Solo scroll-padding: sumado a scroll-margin se desviaría. */
+html {
+  scroll-padding-top: var(--header-h);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -332,4 +323,34 @@ button {
 /* Menú móvil abierto: sin scroll de fondo (el hueco de la barra lo guarda scrollbar-gutter) */
 html.is-menu {
   overflow: hidden;
+}
+
+/* ── Revelado de fotos: máscara de abajo arriba al entrar en pantalla ──
+   Solo si el módulo principal arrancó (html.is-app): si el JS falla, todo se ve. */
+@media (prefers-reduced-motion: no-preference) {
+  html.is-app .revela {
+    clip-path: inset(100% 0 0 0);
+    transition: clip-path 720ms var(--ease-out);
+    transition-delay: calc(var(--orden, 0) * 70ms);
+  }
+  html.is-app .revela.is-visible {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+/* ── Alto contraste (Windows): los estados no dependen solo del color ── */
+@media (forced-colors: active) {
+  .btn,
+  .tarjeta__pedir {
+    border: 1px solid ButtonText;
+  }
+  [role='radio'][aria-checked='true'] {
+    outline: 2px solid Highlight;
+    outline-offset: -4px;
+  }
+  .muestra__color,
+  .selector__muestra,
+  .presilla {
+    forced-color-adjust: none;
+  }
 }

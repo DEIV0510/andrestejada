@@ -202,6 +202,31 @@
             1155
           ]
         ]
+      },
+      "detalle": {
+        "w": 420,
+        "h": 420,
+        "bg": "#ffffff",
+        "avif": [
+          [
+            "/img/alas-cessna-detalle-360.57276e4b.avif",
+            360
+          ],
+          [
+            "/img/alas-cessna-detalle-420.a3885086.avif",
+            420
+          ]
+        ],
+        "webp": [
+          [
+            "/img/alas-cessna-detalle-360.77b98ed0.webp",
+            360
+          ],
+          [
+            "/img/alas-cessna-detalle-420.8822cb15.webp",
+            420
+          ]
+        ]
       }
     }
   },
@@ -511,6 +536,39 @@
             1200
           ]
         ]
+      },
+      "detalle": {
+        "w": 900,
+        "h": 900,
+        "bg": "#cccec9",
+        "avif": [
+          [
+            "/img/pines-esmaltados-detalle-360.76dfde64.avif",
+            360
+          ],
+          [
+            "/img/pines-esmaltados-detalle-540.5c12c04a.avif",
+            540
+          ],
+          [
+            "/img/pines-esmaltados-detalle-720.2daef789.avif",
+            720
+          ]
+        ],
+        "webp": [
+          [
+            "/img/pines-esmaltados-detalle-360.c5efa2e1.webp",
+            360
+          ],
+          [
+            "/img/pines-esmaltados-detalle-540.7a303067.webp",
+            540
+          ],
+          [
+            "/img/pines-esmaltados-detalle-720.6eb908b9.webp",
+            720
+          ]
+        ]
       }
     }
   },
@@ -612,6 +670,39 @@
           [
             "/img/llavero-rbf-card-1200.582f0dc5.webp",
             1200
+          ]
+        ]
+      },
+      "detalle": {
+        "w": 1000,
+        "h": 1000,
+        "bg": "#ad6461",
+        "avif": [
+          [
+            "/img/llavero-rbf-detalle-360.fc99840f.avif",
+            360
+          ],
+          [
+            "/img/llavero-rbf-detalle-540.c87da6f5.avif",
+            540
+          ],
+          [
+            "/img/llavero-rbf-detalle-720.550a8e34.avif",
+            720
+          ]
+        ],
+        "webp": [
+          [
+            "/img/llavero-rbf-detalle-360.f7257575.webp",
+            360
+          ],
+          [
+            "/img/llavero-rbf-detalle-540.50ea0e8a.webp",
+            540
+          ],
+          [
+            "/img/llavero-rbf-detalle-720.b29b0547.webp",
+            720
           ]
         ]
       }

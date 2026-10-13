@@ -1,9 +1,11 @@
 ---
-// Hero: negro (saco) con el mensaje y los dos CTA; blanco (camisa) a sangre con las
-// alas de piloto reales. En móvil, el producto primero y el mensaje enseguida.
+// Hero: negro (saco) con el mensaje y los dos CTA; blanco (camisa) a sangre con las alas
+// de piloto reales. En móvil, el producto primero y el mensaje enseguida.
+// Escritorio: el panel blanco arranca en la columna 8 de la retícula de 12 del contenedor.
 // La foto es el LCP: no se anima nunca y se precarga desde Base.
 import Foto from './Foto.astro';
 import Icono from './Icono.astro';
+import Externo from './Externo.astro';
 import { MARCA } from '@/lib/contacto';
 import { MENSAJE_GENERAL, waUrl } from '@/lib/whatsapp';
 import { HERO_SIZES } from '@/lib/hero';
@@ -22,30 +24,32 @@ import { HERO_SIZES } from '@/lib/hero';
   </div>
 
   <div class="hero__texto sup-negro">
-    <div class="hero__bloque">
-      <p class="rotulo hero__rotulo hero-entra" style="--d:0">Uniformes · Accesorios · Aviones a escala</p>
-      <h1 id="hero-titulo" class="hero__titulo hero-entra" style="--d:1">
-        El estándar de <span class="hero__linea">tu vocación.</span>
-      </h1>
-      <p class="hero__bajada hero-entra" style="--d:2">Uniformes y accesorios para quienes llevan la aviación en su esencia.</p>
-      <div class="hero__acciones hero-entra" style="--d:3" data-hero-cta>
-        <a class="btn btn--oro" href="/#uniformes">
-          Explorar catálogo
-          <Icono name="flecha" size={16} class="flecha" />
-        </a>
-        <a class="btn btn--contorno" href={waUrl(MENSAJE_GENERAL)} target="_blank" rel="noopener">
-          <Icono name="whatsapp" size={18} />
-          Comprar por WhatsApp
-        </a>
-      </div>
-      <p class="hero__nota hero-entra" style="--d:4">{MARCA.envios}. {MARCA.tienda}.</p>
+    <p class="rotulo hero__rotulo hero-entra" style="--d:0">
+      <span>Uniformes</span> <span aria-hidden="true">·</span> <span>Accesorios</span> <span aria-hidden="true">·</span>
+      <span>Aviones a escala</span>
+    </p>
+    <h1 id="hero-titulo" class="hero__titulo hero-entra" style="--d:1">
+      El estándar de <span class="hero__linea">tu vocación.</span>
+    </h1>
+    <p class="hero__bajada hero-entra" style="--d:2">Uniformes y accesorios para quienes llevan la aviación en su esencia.</p>
+    <div class="hero__acciones hero-entra" style="--d:3" data-hero-cta>
+      <a class="btn btn--oro" href="/#uniformes">
+        Explorar catálogo
+        <Icono name="flecha" size={16} class="flecha" />
+      </a>
+      <a class="btn btn--contorno" href={waUrl(MENSAJE_GENERAL)} target="_blank" rel="noopener">
+        <Icono name="whatsapp" size={18} />
+        Comprar por WhatsApp<Externo tipo="whatsapp" />
+      </a>
     </div>
+    <p class="hero__nota hero-entra" style="--d:4">{MARCA.envios}. {MARCA.tienda}.</p>
   </div>
 </section>
 
 <style>
   .hero {
     display: grid;
+    grid-template-columns: minmax(0, 1fr);
     background: var(--negro);
   }
 
@@ -102,17 +106,21 @@ import { HERO_SIZES } from '@/lib/hero';
 
   /* ── Bloque de texto (saco negro) ── */
   .hero__texto {
+    min-width: 0;
     padding: 28px var(--margen) 36px;
   }
   .hero__rotulo {
     color: var(--texto-3-osc);
+    text-wrap: balance;
+  }
+  .hero__rotulo span {
     white-space: nowrap;
   }
   .hero__titulo {
     margin-top: 14px;
     font-family: var(--font-display);
     font-weight: 800;
-    font-size: clamp(34px, 10vw, 40px);
+    font-size: clamp(32px, 10vw, 40px);
     line-height: 1;
     letter-spacing: -0.03em;
   }
@@ -155,29 +163,28 @@ import { HERO_SIZES } from '@/lib/hero';
       max-width: 44ch;
       font-size: 18px;
     }
+    /* Botones del mismo ancho (el del más largo) */
     .hero__acciones {
-      display: flex;
-      flex-wrap: wrap;
-    }
-    .hero__acciones .btn {
-      width: auto;
+      width: max-content;
+      max-width: 100%;
+      grid-template-columns: repeat(2, 1fr);
     }
   }
 
-  /* ── Escritorio: 6 + 6 columnas, el blanco llega al borde derecho ── */
+  /* ── Escritorio: [margen][7 columnas de texto][panel blanco hasta el borde] ── */
   @media (min-width: 1024px) {
     .hero {
-      grid-template-columns: minmax(0, 7fr) minmax(0, 6fr);
+      --interior: min(100% - 2 * var(--margen), var(--contenedor));
+      grid-template-columns:
+        calc((100% - var(--interior)) / 2)
+        calc((var(--interior) + 24px) * 7 / 12)
+        minmax(0, 1fr);
       height: clamp(560px, calc(100svh - var(--header-h)), 720px);
     }
     .hero__texto {
-      grid-column: 1;
+      grid-column: 2;
       grid-row: 1;
-      /* el texto se alinea con el borde izquierdo del contenedor de 1200 px */
-      padding: 0 40px 0 max(var(--margen), calc((100% * 13 / 7 - var(--contenedor)) / 2));
-    }
-    .hero__bloque {
-      padding-top: clamp(56px, 16vh, 148px);
+      padding: clamp(56px, 16vh, 148px) 40px 0 0;
     }
     .hero__titulo {
       margin-top: 20px;
@@ -188,18 +195,17 @@ import { HERO_SIZES } from '@/lib/hero';
     }
     .hero__acciones {
       margin-top: 36px;
+      grid-template-columns: 1fr;
     }
     .hero__panel {
-      grid-column: 2;
+      grid-column: 3;
       grid-row: 1;
       aspect-ratio: auto;
       height: 100%;
-      place-items: start center;
     }
     .hero__pieza {
-      width: min(78%, 560px);
-      /* centro de la pieza un poco por encima de la mitad (44 % del alto) */
-      align-self: center;
+      width: min(80%, 560px);
+      /* centro de la pieza un poco por encima de la mitad */
       transform: translateY(-6%);
     }
     .hero__marcas {
@@ -223,6 +229,12 @@ import { HERO_SIZES } from '@/lib/hero';
       width: 24px;
       height: 1px;
       background: var(--gris);
+    }
+  }
+  /* Con espacio de sobra, los dos botones en una fila */
+  @media (min-width: 1280px) {
+    .hero__acciones {
+      grid-template-columns: repeat(2, 1fr);
     }
   }
 

@@ -3,7 +3,10 @@
 // por página. <Logo> los reutiliza con <use>: el negro del logo es currentColor
 // (blanco sobre fondo negro) y el dorado es el del logo original.
 import marca from '@/data/marca.json';
-const piezas = Object.entries(marca.trazados) as [string, string][];
+// Solo las piezas de las versiones que usan las páginas (compacto y emblema): el lema y
+// la regla del logo completo solo aparecen en la imagen Open Graph.
+const usadas = new Set([...marca.versiones.compacto.piezas, ...marca.versiones.emblema.piezas]);
+const piezas = (Object.entries(marca.trazados) as [string, string][]).filter(([id]) => usadas.has(id));
 ---
 
 <svg class="marca-sprite" width="0" height="0" aria-hidden="true" focusable="false">

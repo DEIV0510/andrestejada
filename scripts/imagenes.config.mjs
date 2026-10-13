@@ -6,6 +6,7 @@
 // Recortes:
 //   full → la foto entera (o la franja útil de la captura)
 //   card → encuadre de tarjeta (4:5 en las verticales, 2:1 en las alas)
+//   detalle → acercamiento cuadrado (bloque de Instagram: no repite el encuadre del catálogo)
 //
 // El script mide el color real del fondo (mediana del borde de cada recorte): el marco
 // de la tarjeta usa ese color mientras carga y para que la foto encaje sin fundidos.
@@ -37,6 +38,8 @@ export default [
       full: { left: 0, top: 960, width: 1155, height: 616 },
       // objeto 46–1096 × 1132–1404 → 2:1 centrado
       card: { left: 0, top: 979, width: 1155, height: 578 },
+      // escudo Cessna (480–660 × 1130–1395) con el arranque de las alas
+      detalle: { left: 370, top: 1050, width: 420, height: 420 },
     },
   },
   {
@@ -65,6 +68,8 @@ export default [
       full: { left: 0, top: 0, width: 1875, height: 2500 },
       // el pin del frente queda en el tercio inferior; se quita parte del satén de arriba
       card: { left: 40, top: 480, width: 1600, height: 2000 },
+      // el pin del frente: cabina y ventanillas
+      detalle: { left: 200, top: 1450, width: 900, height: 900 },
     },
   },
   {
@@ -74,6 +79,8 @@ export default [
     crops: {
       full: { left: 0, top: 0, width: 1875, height: 2500 },
       card: { left: 0, top: 156, width: 1875, height: 2344 },
+      // el bordado «REMOVE BEFORE FLIGHT»
+      detalle: { left: 450, top: 700, width: 1000, height: 1000 },
     },
   },
 ];

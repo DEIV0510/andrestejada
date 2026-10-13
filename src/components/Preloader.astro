@@ -1,9 +1,10 @@
 ---
 // Pantalla de carga: solo la 1.ª visita a la portada (lo decide el script del <head>).
-// Fotograma 0: logo ya visible (si todo arrancara invisible, Chrome dejaría la pantalla
-// en blanco). El nombre aparece de izquierda a derecha, una línea dorada recorre la
-// trayectoria y avanza solo con hitos reales (documento, tipografías, foto principal).
-// Salida: telón hacia arriba (clip-path). Nunca más de 1,4 s; sin bloquear el scroll.
+// Fotograma 0: el emblema ya visible (si todo arrancara invisible, Chrome dejaría la
+// pantalla en blanco). El nombre aparece de izquierda a derecha, una línea dorada recorre
+// la trayectoria y avanza solo con hitos reales (documento, tipografía, foto principal).
+// Salida: telón hacia arriba (clip-path). Mientras dura (≤ 1,4 s) captura los toques para
+// que nadie active un enlace que no ve; la rueda y el gesto siguen desplazando la página.
 import Logo from './Logo.astro';
 ---
 
@@ -31,14 +32,26 @@ import Logo from './Logo.astro';
     gap: 28px;
     background: var(--negro);
     color: var(--blanco);
-    pointer-events: none;
-    /* Respaldo sin JS a mitad de camino: se cierra sola. */
-    animation: intro-telon 360ms var(--ease-in-out) 1.6s forwards;
+    /* Respaldo si el script se detuviera a mitad de camino: se retira sola. */
+    animation: intro-respaldo 360ms var(--ease-in-out) 2.4s forwards;
   }
   :global(html.is-intro-out) .intro {
-    animation: intro-telon 400ms var(--ease-in-out) forwards;
+    animation: intro-salida 460ms var(--ease-in-out) forwards;
+    pointer-events: none;
   }
-  @keyframes intro-telon {
+  @keyframes intro-salida {
+    from {
+      clip-path: inset(0 0 0 0);
+    }
+    to {
+      clip-path: inset(0 0 100% 0);
+      visibility: hidden;
+    }
+  }
+  @keyframes intro-respaldo {
+    from {
+      clip-path: inset(0 0 0 0);
+    }
     to {
       clip-path: inset(0 0 100% 0);
       visibility: hidden;
@@ -62,7 +75,7 @@ import Logo from './Logo.astro';
     right: -2px;
     background: var(--negro);
     transform-origin: 100% 50%;
-    animation: intro-nombre 560ms var(--ease-out) 90ms both;
+    animation: intro-nombre 560ms var(--ease-out) 60ms both;
   }
   @keyframes intro-nombre {
     from {
@@ -73,15 +86,14 @@ import Logo from './Logo.astro';
     }
   }
 
-  /* Trayectoria: hilo fino y avance dorado */
+  /* Trayectoria: hilo fino y avance dorado con la punta más clara */
   .intro__ruta {
     position: relative;
     width: min(76vw, 360px);
-    height: 1px;
+    height: 2px;
     background: var(--hilo-osc);
     overflow: hidden;
   }
-  /* La línea entra desde la izquierda como una trayectoria; su punta, más clara. */
   .intro__avance {
     position: absolute;
     inset: 0;

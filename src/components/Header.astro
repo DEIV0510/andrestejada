@@ -2,8 +2,10 @@
 // Cabecera negra fija (sin transparencias). Escritorio: menú completo + WhatsApp.
 // Móvil y tablet: logo · WhatsApp · MENÚ (cajón a pantalla completa, hermano del header
 // para que el header sticky no lo atrape).
+// Sin JavaScript, MENÚ es un enlace a #menu-movil y el cajón se abre con :target.
 import Logo from './Logo.astro';
 import Icono from './Icono.astro';
+import Externo from './Externo.astro';
 import { INSTAGRAM } from '@/lib/contacto';
 import { MENSAJE_GENERAL, waUrl } from '@/lib/whatsapp';
 import { NAV } from '@/lib/nav';
@@ -29,23 +31,24 @@ const wa = waUrl(MENSAJE_GENERAL);
         }
       </ul>
     </nav>
-    <a class="header__wa" href={wa} target="_blank" rel="noopener" aria-label="Escribir por WhatsApp (se abre en otra pestaña)">
+    <a class="header__wa" href={wa} target="_blank" rel="noopener">
       <Icono name="whatsapp" size={22} />
+      <span class="visualmente-oculto">Escribir por WhatsApp</span><Externo tipo="whatsapp" />
     </a>
-    <button class="header__menu" type="button" aria-expanded="false" aria-controls="menu-movil" data-menu-boton>
+    <a class="header__menu" href="#menu-movil" role="button" aria-expanded="false" aria-controls="menu-movil" data-menu-boton>
       <span data-menu-texto>Menú</span>
-    </button>
+    </a>
   </div>
 </header>
 
-<div id="menu-movil" class="menu sup-negro" hidden data-menu>
+<div id="menu-movil" class="menu sup-negro" data-menu>
   <nav class="menu__nav contenedor" aria-label="Menú">
     <ol role="list">
       {
         NAV.map((l, i) => (
           <li style={`--i:${i}`}>
-            <a href={l.href} data-menu-enlace>
-              <span class="menu__n tnum" aria-hidden="true">
+            <a href={l.href} data-spy={l.id} data-menu-enlace>
+              <span class="menu__n" aria-hidden="true">
                 {String(i + 1).padStart(2, '0')}
               </span>
               {l.texto}
@@ -57,10 +60,10 @@ const wa = waUrl(MENSAJE_GENERAL);
     <div class="menu__pie">
       <a class="btn btn--oro menu__cta" href={wa} target="_blank" rel="noopener">
         <Icono name="whatsapp" size={20} />
-        Comprar por WhatsApp
+        Comprar por WhatsApp<Externo tipo="whatsapp" />
       </a>
       <a class="menu__ig" href={INSTAGRAM.url} target="_blank" rel="noopener">
-        <Icono name="instagram" size={18} />@{INSTAGRAM.usuario}
+        <Icono name="instagram" size={18} />@{INSTAGRAM.usuario}<Externo />
       </a>
     </div>
   </nav>
@@ -86,9 +89,10 @@ const wa = waUrl(MENSAJE_GENERAL);
     gap: 4px;
   }
   .header__logo {
-    display: block;
+    display: flex;
+    align-items: center;
+    min-height: 44px;
     margin-right: auto;
-    padding: 6px 0;
   }
   .header__logo-svg {
     height: 26px;
@@ -100,11 +104,6 @@ const wa = waUrl(MENSAJE_GENERAL);
     }
   }
   @media (min-width: 768px) {
-    .header__logo-svg {
-      height: 34px;
-    }
-  }
-  @media (min-width: 1024px) {
     .header__logo-svg {
       height: 34px;
     }
@@ -129,8 +128,9 @@ const wa = waUrl(MENSAJE_GENERAL);
     }
     .header__nav a {
       position: relative;
-      display: block;
-      padding: 12px 0;
+      display: flex;
+      align-items: center;
+      min-height: 44px;
       font: 600 12px/1 var(--font-text);
       letter-spacing: 0.12em;
       text-transform: uppercase;
@@ -143,7 +143,7 @@ const wa = waUrl(MENSAJE_GENERAL);
       position: absolute;
       left: 0;
       right: 0;
-      bottom: 4px;
+      bottom: 8px;
       height: 1px;
       background: currentColor;
       transform: scaleX(0);
@@ -160,7 +160,7 @@ const wa = waUrl(MENSAJE_GENERAL);
     /* Sección activa: barra dorada de 2 px */
     .header__nav a[aria-current]::after {
       height: 2px;
-      bottom: 3px;
+      bottom: 7px;
       background: var(--dorado);
       transform: none;
     }
@@ -181,22 +181,19 @@ const wa = waUrl(MENSAJE_GENERAL);
   .header__wa:hover {
     border-color: var(--dorado);
   }
-  @media (min-width: 1024px) {
-    .header__wa {
-      width: 40px;
-      height: 40px;
-    }
-  }
 
   .header__menu {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
     min-width: 64px;
     height: 44px;
-    padding: 0 0 0 12px;
+    padding-left: 12px;
     font: 600 12px/1 var(--font-text);
     letter-spacing: 0.12em;
     text-transform: uppercase;
-    text-align: right;
     color: var(--blanco);
+    cursor: pointer;
   }
   @media (min-width: 1024px) {
     .header__menu {
@@ -206,6 +203,7 @@ const wa = waUrl(MENSAJE_GENERAL);
 
   /* ── Cajón móvil ── */
   .menu {
+    display: none;
     position: fixed;
     inset: 0;
     z-index: 55;
@@ -213,16 +211,31 @@ const wa = waUrl(MENSAJE_GENERAL);
     overflow-y: auto;
     overscroll-behavior: contain;
     background: var(--negro);
-    clip-path: inset(0 0 100% 0);
-    transition: clip-path 200ms ease-in;
   }
-  .menu:global(.is-open) {
+  /* Sin JS: se abre al ser el destino del enlace MENÚ */
+  .menu:target {
+    display: block;
+  }
+  /* Con JS: clases del script (abrir/cerrar con animación) */
+  :global(html.is-app) .menu {
+    display: block;
+    visibility: hidden;
+    clip-path: inset(0 0 100% 0);
+    transition:
+      clip-path 200ms ease-in,
+      visibility 0s linear 200ms;
+  }
+  :global(html.is-app) .menu:global(.is-open) {
+    visibility: visible;
     clip-path: inset(0);
-    transition: clip-path 280ms var(--ease-out);
+    transition:
+      clip-path 280ms var(--ease-out),
+      visibility 0s linear 0s;
   }
   @media (min-width: 1024px) {
-    .menu {
-      display: none !important;
+    .menu,
+    :global(html.is-app) .menu {
+      display: none;
     }
   }
   .menu__nav {
@@ -237,10 +250,12 @@ const wa = waUrl(MENSAJE_GENERAL);
   }
   .menu__nav li {
     border-bottom: 1px solid var(--hilo-osc);
+  }
+  :global(html.is-app) .menu__nav li {
     opacity: 0;
     transition: opacity 180ms linear;
   }
-  .menu:global(.is-open) li {
+  :global(html.is-app) .menu:global(.is-open) li {
     opacity: 1;
     transition-delay: calc(80ms + var(--i) * 30ms);
   }
@@ -253,9 +268,14 @@ const wa = waUrl(MENSAJE_GENERAL);
     letter-spacing: -0.02em;
   }
   .menu__n {
+    min-width: 2.2ch;
     font: 500 12px/1 var(--font-text);
+    font-variant-numeric: tabular-nums;
     letter-spacing: 0.08em;
     color: var(--texto-3-osc);
+  }
+  .menu__nav li a[aria-current] .menu__n {
+    color: var(--dorado);
   }
   .menu__pie {
     margin-top: auto;
@@ -275,14 +295,21 @@ const wa = waUrl(MENSAJE_GENERAL);
     color: var(--texto-2-osc);
   }
   @media (prefers-reduced-motion: reduce) {
-    .menu,
-    .menu:global(.is-open) {
+    :global(html.is-app) .menu,
+    :global(html.is-app) .menu:global(.is-open) {
       clip-path: none;
-      opacity: 0;
-      transition: opacity 120ms linear;
     }
-    .menu:global(.is-open) {
+    :global(html.is-app) .menu {
+      opacity: 0;
+      transition:
+        opacity 120ms linear,
+        visibility 0s linear 120ms;
+    }
+    :global(html.is-app) .menu:global(.is-open) {
       opacity: 1;
+      transition:
+        opacity 120ms linear,
+        visibility 0s linear 0s;
     }
   }
 </style>
