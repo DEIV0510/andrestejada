@@ -1,0 +1,131 @@
+---
+// Marca: la presilla de cuatro galones (las cuatro franjas del emblema), el mensaje en
+// dos líneas, una foto real y la franja de envíos. Sin párrafos, sin cifras inventadas.
+import Presilla from './Presilla.astro';
+import Foto from './Foto.astro';
+import Icono from './Icono.astro';
+import ShippingBenefits from './ShippingBenefits.astro';
+import { MENSAJE_GENERAL, waUrl } from '@/lib/whatsapp';
+---
+
+<section class="marca sup-negro" aria-labelledby="marca-titulo">
+  <div class="contenedor marca__reticula">
+    <div class="marca__texto">
+      <Presilla galones={4} ancho={96} sobreNegro animada />
+      <p class="rotulo marca__rotulo">Tu vocación merece estar a la altura</p>
+      <h2 id="marca-titulo" class="marca__titulo">
+        Más que un uniforme. <span class="marca__linea2">Una forma de representar tu vocación.</span>
+      </h2>
+      <a class="btn btn--oro marca__cta" href={waUrl(MENSAJE_GENERAL)} target="_blank" rel="noopener">
+        <Icono name="whatsapp" size={18} />
+        Comprar por WhatsApp
+      </a>
+    </div>
+    <figure class="marca__foto">
+      <a href="/catalogo/pin-avion-metalico/" class="marca__enlace" aria-label="Ver el pin avión metálico">
+        <Foto
+          id="pin-avion-dorado"
+          recorte="full"
+          sizes="(min-width: 1264px) 384px, (min-width: 1024px) 31vw, (min-width: 768px) 40vw, calc(100vw - 32px)"
+          class="marca__img"
+        />
+      </a>
+      <figcaption class="rotulo marca__pie">Pin avión metálico · acabado dorado</figcaption>
+    </figure>
+    <div class="marca__envios">
+      <ShippingBenefits />
+    </div>
+  </div>
+</section>
+
+<style>
+  .marca {
+    padding-block: 80px;
+  }
+  .marca__reticula {
+    display: grid;
+    gap: 40px;
+  }
+  .marca__texto {
+    display: grid;
+    justify-items: start;
+    gap: 20px;
+  }
+  .marca__rotulo {
+    color: var(--texto-3-osc);
+  }
+  .marca__titulo {
+    font: 700 30px/1.08 var(--font-display);
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+  }
+  .marca__linea2 {
+    display: block;
+    color: var(--texto-2-osc);
+  }
+  .marca__cta {
+    margin-top: 8px;
+  }
+  .marca__foto {
+    position: relative;
+    max-width: 360px;
+  }
+  .marca__img {
+    aspect-ratio: 4 / 3;
+  }
+  .marca__img :global(img) {
+    object-fit: cover;
+    object-position: 50% 56%;
+  }
+  .marca__pie {
+    margin-top: 10px;
+    color: var(--texto-3-osc);
+  }
+
+  @media (min-width: 768px) {
+    .marca__reticula {
+      grid-template-columns: 1fr minmax(260px, 40%);
+      align-items: end;
+      column-gap: 48px;
+    }
+    .marca__envios {
+      grid-column: 1 / -1;
+    }
+    .marca__titulo {
+      font-size: 44px;
+    }
+    .marca__img {
+      aspect-ratio: 3 / 4;
+    }
+  }
+  @media (min-width: 1024px) {
+    .marca {
+      padding-block: 128px;
+    }
+    .marca__reticula {
+      grid-template-columns: repeat(12, 1fr);
+      column-gap: 24px;
+      row-gap: 64px;
+    }
+    .marca__texto {
+      gap: 24px;
+    }
+    .marca__reticula {
+      align-items: center;
+    }
+    .marca__texto {
+      grid-column: 1 / span 7;
+    }
+    .marca__titulo {
+      font-size: 52px;
+      max-width: 13em;
+    }
+    .marca__foto {
+      grid-column: 9 / span 4;
+      max-width: none;
+    }
+    .marca__img {
+      aspect-ratio: 4 / 5;
+    }
+  }
+</style>

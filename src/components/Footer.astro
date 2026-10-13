@@ -1,0 +1,150 @@
+---
+// Footer = contacto. Solo datos reales: WhatsApp (provisional, desde una sola constante),
+// Instagram, tienda virtual y envíos nacionales. Sin dirección, NIT ni políticas:
+// no existen documentos legales todavía.
+import Logo from './Logo.astro';
+import Icono from './Icono.astro';
+import { CATEGORIAS } from '@/data/catalogo';
+import { INSTAGRAM, MARCA, WHATSAPP_VISIBLE } from '@/lib/contacto';
+import { MENSAJE_GENERAL, waUrl } from '@/lib/whatsapp';
+
+const anio = new Date().getFullYear();
+const wa = waUrl(MENSAJE_GENERAL);
+---
+
+<footer id="contacto" class="pie sup-negro" data-ancla data-footer aria-labelledby="pie-titulo">
+  <div class="contenedor">
+    <div class="pie__llamado">
+      <h2 id="pie-titulo" class="pie__titulo">Pedidos y consultas por WhatsApp</h2>
+      <a class="btn btn--oro" href={wa} target="_blank" rel="noopener">
+        <Icono name="whatsapp" size={18} />
+        Escribir por WhatsApp
+      </a>
+    </div>
+
+    <div class="pie__reticula">
+      <div class="pie__marca">
+        <a href="/#inicio" aria-label="Andrés Tejada Aviation Shop, inicio">
+          <Logo version="compacto" alto={36} decorativo class="pie__logo" />
+        </a>
+        <p class="rotulo pie__lema">Uniformes • Accesorios • Aviones a escala</p>
+      </div>
+
+      <nav class="pie__col" aria-labelledby="pie-catalogo">
+        <p id="pie-catalogo" class="rotulo pie__col-t">Catálogo</p>
+        <ul role="list">
+          {
+            CATEGORIAS.map((c) => (
+              <li>
+                <a href={`/#${c.id}`}>{c.nombre}</a>
+              </li>
+            ))
+          }
+        </ul>
+      </nav>
+
+      <div class="pie__col">
+        <p class="rotulo pie__col-t">Contacto</p>
+        <ul role="list">
+          <li>
+            <a href={wa} target="_blank" rel="noopener" class="pie__dato">
+              <Icono name="whatsapp" size={18} />
+              <span class="tnum">{WHATSAPP_VISIBLE}</span>
+            </a>
+          </li>
+          <li>
+            <a href={INSTAGRAM.url} target="_blank" rel="noopener" class="pie__dato">
+              <Icono name="instagram" size={18} />
+              @{INSTAGRAM.usuario}
+            </a>
+          </li>
+          <li class="pie__nota">{MARCA.tienda} · {MARCA.envios}</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="pie__base">
+      <p>© {anio} {MARCA.nombre}</p>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .pie {
+    padding-top: var(--seccion-y);
+    padding-bottom: calc(24px + env(safe-area-inset-bottom));
+  }
+  .pie__llamado {
+    display: grid;
+    justify-items: start;
+    gap: 24px;
+    padding-bottom: 48px;
+    border-bottom: 1px solid var(--gris);
+  }
+  .pie__titulo {
+    font: 700 28px/1.05 var(--font-display);
+    letter-spacing: -0.02em;
+  }
+  .pie__reticula {
+    display: grid;
+    gap: 36px;
+    padding-block: 40px;
+  }
+  .pie__marca {
+    display: grid;
+    gap: 14px;
+    justify-items: start;
+    align-content: start;
+  }
+  .pie__logo {
+    height: 30px;
+    width: auto;
+  }
+  .pie__lema {
+    color: var(--texto-3-osc);
+  }
+  .pie__col-t {
+    margin-bottom: 10px;
+    color: var(--texto-3-osc);
+  }
+  .pie__col li a {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 44px;
+    color: var(--texto-2-osc);
+    transition: color 160ms linear;
+  }
+  .pie__col li a:hover {
+    color: var(--blanco);
+  }
+  .pie__nota {
+    padding-top: 10px;
+    font-size: 14px;
+    color: var(--texto-3-osc);
+  }
+  .pie__base {
+    padding-top: 20px;
+    border-top: 1px solid var(--hilo-osc);
+    font-size: 12px;
+    color: var(--texto-3-osc);
+  }
+
+  @media (min-width: 768px) {
+    .pie__llamado {
+      grid-template-columns: 1fr auto;
+      align-items: center;
+    }
+    .pie__titulo {
+      font-size: 40px;
+    }
+    .pie__reticula {
+      grid-template-columns: 2fr 1fr 1.4fr;
+      gap: 24px;
+      padding-block: 56px;
+    }
+    .pie__logo {
+      height: 36px;
+    }
+  }
+</style>

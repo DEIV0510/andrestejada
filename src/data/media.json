@@ -1,0 +1,620 @@
+{
+  "alas-piper": {
+    "alt": "Alas de piloto doradas con escudo esmaltado blanco y logotipo Piper",
+    "crops": {
+      "full": {
+        "w": 1155,
+        "h": 738,
+        "bg": "#ffffff",
+        "avif": [
+          [
+            "/img/alas-piper-full-360.aa50397b.avif",
+            360
+          ],
+          [
+            "/img/alas-piper-full-540.dcc01903.avif",
+            540
+          ],
+          [
+            "/img/alas-piper-full-720.0a9dfc76.avif",
+            720
+          ],
+          [
+            "/img/alas-piper-full-960.9b7a5170.avif",
+            960
+          ],
+          [
+            "/img/alas-piper-full-1080.608c7a55.avif",
+            1080
+          ]
+        ],
+        "webp": [
+          [
+            "/img/alas-piper-full-360.3f11dc3d.webp",
+            360
+          ],
+          [
+            "/img/alas-piper-full-540.bb980819.webp",
+            540
+          ],
+          [
+            "/img/alas-piper-full-720.ef7d9140.webp",
+            720
+          ],
+          [
+            "/img/alas-piper-full-960.680112ae.webp",
+            960
+          ],
+          [
+            "/img/alas-piper-full-1080.5e9ff4c6.webp",
+            1080
+          ]
+        ]
+      },
+      "card": {
+        "w": 1155,
+        "h": 578,
+        "bg": "#ffffff",
+        "avif": [
+          [
+            "/img/alas-piper-card-360.7117e795.avif",
+            360
+          ],
+          [
+            "/img/alas-piper-card-540.10629a06.avif",
+            540
+          ],
+          [
+            "/img/alas-piper-card-720.0c82a4ac.avif",
+            720
+          ],
+          [
+            "/img/alas-piper-card-960.e2461d81.avif",
+            960
+          ],
+          [
+            "/img/alas-piper-card-1155.1d875a20.avif",
+            1155
+          ]
+        ],
+        "webp": [
+          [
+            "/img/alas-piper-card-360.11a1d136.webp",
+            360
+          ],
+          [
+            "/img/alas-piper-card-540.ec78ae1c.webp",
+            540
+          ],
+          [
+            "/img/alas-piper-card-720.b90d7eff.webp",
+            720
+          ],
+          [
+            "/img/alas-piper-card-960.e062392e.webp",
+            960
+          ],
+          [
+            "/img/alas-piper-card-1155.5a10e1d0.webp",
+            1155
+          ]
+        ]
+      }
+    }
+  },
+  "alas-cessna": {
+    "alt": "Alas de piloto doradas con escudo esmaltado blanco y logotipo Cessna",
+    "crops": {
+      "full": {
+        "w": 1155,
+        "h": 616,
+        "bg": "#ffffff",
+        "avif": [
+          [
+            "/img/alas-cessna-full-360.df5a07f2.avif",
+            360
+          ],
+          [
+            "/img/alas-cessna-full-540.5c29612a.avif",
+            540
+          ],
+          [
+            "/img/alas-cessna-full-720.fee99f0d.avif",
+            720
+          ],
+          [
+            "/img/alas-cessna-full-960.b60557c9.avif",
+            960
+          ],
+          [
+            "/img/alas-cessna-full-1080.8b555357.avif",
+            1080
+          ]
+        ],
+        "webp": [
+          [
+            "/img/alas-cessna-full-360.62d750e6.webp",
+            360
+          ],
+          [
+            "/img/alas-cessna-full-540.aff7dd68.webp",
+            540
+          ],
+          [
+            "/img/alas-cessna-full-720.24745139.webp",
+            720
+          ],
+          [
+            "/img/alas-cessna-full-960.6d173732.webp",
+            960
+          ],
+          [
+            "/img/alas-cessna-full-1080.b461147c.webp",
+            1080
+          ]
+        ]
+      },
+      "card": {
+        "w": 1155,
+        "h": 578,
+        "bg": "#ffffff",
+        "avif": [
+          [
+            "/img/alas-cessna-card-360.e88e1737.avif",
+            360
+          ],
+          [
+            "/img/alas-cessna-card-540.96a264fc.avif",
+            540
+          ],
+          [
+            "/img/alas-cessna-card-720.95bc4a0f.avif",
+            720
+          ],
+          [
+            "/img/alas-cessna-card-960.b47592f4.avif",
+            960
+          ],
+          [
+            "/img/alas-cessna-card-1155.d4ac18e9.avif",
+            1155
+          ]
+        ],
+        "webp": [
+          [
+            "/img/alas-cessna-card-360.fe869d52.webp",
+            360
+          ],
+          [
+            "/img/alas-cessna-card-540.e243b740.webp",
+            540
+          ],
+          [
+            "/img/alas-cessna-card-720.fcacfcbc.webp",
+            720
+          ],
+          [
+            "/img/alas-cessna-card-960.13a3109d.webp",
+            960
+          ],
+          [
+            "/img/alas-cessna-card-1155.39e61478.webp",
+            1155
+          ]
+        ]
+      }
+    }
+  },
+  "pin-avion-dorado": {
+    "alt": "Pin metálico de avión cuatrimotor en acabado dorado sobre tela gris",
+    "crops": {
+      "full": {
+        "w": 1875,
+        "h": 2500,
+        "bg": "#767c81",
+        "avif": [
+          [
+            "/img/pin-avion-dorado-full-360.305a878a.avif",
+            360
+          ],
+          [
+            "/img/pin-avion-dorado-full-540.fab6094f.avif",
+            540
+          ],
+          [
+            "/img/pin-avion-dorado-full-720.934ef896.avif",
+            720
+          ],
+          [
+            "/img/pin-avion-dorado-full-960.c6802439.avif",
+            960
+          ],
+          [
+            "/img/pin-avion-dorado-full-1080.b526f6a6.avif",
+            1080
+          ]
+        ],
+        "webp": [
+          [
+            "/img/pin-avion-dorado-full-360.2ba90197.webp",
+            360
+          ],
+          [
+            "/img/pin-avion-dorado-full-540.2088c117.webp",
+            540
+          ],
+          [
+            "/img/pin-avion-dorado-full-720.7c90fd67.webp",
+            720
+          ],
+          [
+            "/img/pin-avion-dorado-full-960.16f9ca16.webp",
+            960
+          ],
+          [
+            "/img/pin-avion-dorado-full-1080.18237e40.webp",
+            1080
+          ]
+        ]
+      },
+      "card": {
+        "w": 1200,
+        "h": 1500,
+        "bg": "#7f868a",
+        "avif": [
+          [
+            "/img/pin-avion-dorado-card-360.0d8ebf98.avif",
+            360
+          ],
+          [
+            "/img/pin-avion-dorado-card-540.0d98a5fc.avif",
+            540
+          ],
+          [
+            "/img/pin-avion-dorado-card-720.88a2d81b.avif",
+            720
+          ],
+          [
+            "/img/pin-avion-dorado-card-960.aef2f54f.avif",
+            960
+          ],
+          [
+            "/img/pin-avion-dorado-card-1200.9888faf6.avif",
+            1200
+          ]
+        ],
+        "webp": [
+          [
+            "/img/pin-avion-dorado-card-360.d9da5854.webp",
+            360
+          ],
+          [
+            "/img/pin-avion-dorado-card-540.e01347d8.webp",
+            540
+          ],
+          [
+            "/img/pin-avion-dorado-card-720.d6c6cb18.webp",
+            720
+          ],
+          [
+            "/img/pin-avion-dorado-card-960.bc52d476.webp",
+            960
+          ],
+          [
+            "/img/pin-avion-dorado-card-1200.f1b5a296.webp",
+            1200
+          ]
+        ]
+      }
+    }
+  },
+  "pin-avion-plateado": {
+    "alt": "Pin metálico de avión cuatrimotor en acabado plateado sobre tela gris",
+    "crops": {
+      "full": {
+        "w": 1875,
+        "h": 2500,
+        "bg": "#757979",
+        "avif": [
+          [
+            "/img/pin-avion-plateado-full-360.88f17817.avif",
+            360
+          ],
+          [
+            "/img/pin-avion-plateado-full-540.5219a294.avif",
+            540
+          ],
+          [
+            "/img/pin-avion-plateado-full-720.3f2bc83b.avif",
+            720
+          ],
+          [
+            "/img/pin-avion-plateado-full-960.cdbd1fa6.avif",
+            960
+          ],
+          [
+            "/img/pin-avion-plateado-full-1080.b0cba8e5.avif",
+            1080
+          ]
+        ],
+        "webp": [
+          [
+            "/img/pin-avion-plateado-full-360.04182f0e.webp",
+            360
+          ],
+          [
+            "/img/pin-avion-plateado-full-540.0f22b4f3.webp",
+            540
+          ],
+          [
+            "/img/pin-avion-plateado-full-720.29e321e7.webp",
+            720
+          ],
+          [
+            "/img/pin-avion-plateado-full-960.2521cd39.webp",
+            960
+          ],
+          [
+            "/img/pin-avion-plateado-full-1080.35ed0f4e.webp",
+            1080
+          ]
+        ]
+      },
+      "card": {
+        "w": 1200,
+        "h": 1500,
+        "bg": "#797d7d",
+        "avif": [
+          [
+            "/img/pin-avion-plateado-card-360.1786c764.avif",
+            360
+          ],
+          [
+            "/img/pin-avion-plateado-card-540.85e758b0.avif",
+            540
+          ],
+          [
+            "/img/pin-avion-plateado-card-720.899dcce8.avif",
+            720
+          ],
+          [
+            "/img/pin-avion-plateado-card-960.4b9e8d5e.avif",
+            960
+          ],
+          [
+            "/img/pin-avion-plateado-card-1200.6acd3b33.avif",
+            1200
+          ]
+        ],
+        "webp": [
+          [
+            "/img/pin-avion-plateado-card-360.dfc7d430.webp",
+            360
+          ],
+          [
+            "/img/pin-avion-plateado-card-540.6922abc0.webp",
+            540
+          ],
+          [
+            "/img/pin-avion-plateado-card-720.ed80b49c.webp",
+            720
+          ],
+          [
+            "/img/pin-avion-plateado-card-960.e3181e46.webp",
+            960
+          ],
+          [
+            "/img/pin-avion-plateado-card-1200.263e3e47.webp",
+            1200
+          ]
+        ]
+      }
+    }
+  },
+  "pines-esmaltados": {
+    "alt": "Pines esmaltados de avión blancos con cola azul y verde, agrupados sobre satén",
+    "crops": {
+      "full": {
+        "w": 1875,
+        "h": 2500,
+        "bg": "#c6b9ad",
+        "avif": [
+          [
+            "/img/pines-esmaltados-full-360.b455c0fe.avif",
+            360
+          ],
+          [
+            "/img/pines-esmaltados-full-540.e34a7ea3.avif",
+            540
+          ],
+          [
+            "/img/pines-esmaltados-full-720.36a607b8.avif",
+            720
+          ],
+          [
+            "/img/pines-esmaltados-full-960.1a13d1f7.avif",
+            960
+          ],
+          [
+            "/img/pines-esmaltados-full-1080.2b774177.avif",
+            1080
+          ]
+        ],
+        "webp": [
+          [
+            "/img/pines-esmaltados-full-360.6f1e0e84.webp",
+            360
+          ],
+          [
+            "/img/pines-esmaltados-full-540.4a3085a8.webp",
+            540
+          ],
+          [
+            "/img/pines-esmaltados-full-720.e5bd81cc.webp",
+            720
+          ],
+          [
+            "/img/pines-esmaltados-full-960.0452ad72.webp",
+            960
+          ],
+          [
+            "/img/pines-esmaltados-full-1080.7bc9c70a.webp",
+            1080
+          ]
+        ]
+      },
+      "card": {
+        "w": 1600,
+        "h": 2000,
+        "bg": "#c8c2b7",
+        "avif": [
+          [
+            "/img/pines-esmaltados-card-360.b4842d75.avif",
+            360
+          ],
+          [
+            "/img/pines-esmaltados-card-540.e4685117.avif",
+            540
+          ],
+          [
+            "/img/pines-esmaltados-card-720.39dcad53.avif",
+            720
+          ],
+          [
+            "/img/pines-esmaltados-card-960.5f6cd214.avif",
+            960
+          ],
+          [
+            "/img/pines-esmaltados-card-1200.1c451790.avif",
+            1200
+          ]
+        ],
+        "webp": [
+          [
+            "/img/pines-esmaltados-card-360.01a28fa1.webp",
+            360
+          ],
+          [
+            "/img/pines-esmaltados-card-540.c59ff9b6.webp",
+            540
+          ],
+          [
+            "/img/pines-esmaltados-card-720.76ac3503.webp",
+            720
+          ],
+          [
+            "/img/pines-esmaltados-card-960.919f9dcd.webp",
+            960
+          ],
+          [
+            "/img/pines-esmaltados-card-1200.696680a0.webp",
+            1200
+          ]
+        ]
+      }
+    }
+  },
+  "llavero-rbf": {
+    "alt": "Llavero rojo bordado «Remove Before Flight» sostenido en la mano, con más llaveros detrás",
+    "crops": {
+      "full": {
+        "w": 1875,
+        "h": 2500,
+        "bg": "#a38c81",
+        "avif": [
+          [
+            "/img/llavero-rbf-full-360.bc7ed939.avif",
+            360
+          ],
+          [
+            "/img/llavero-rbf-full-540.21d4327c.avif",
+            540
+          ],
+          [
+            "/img/llavero-rbf-full-720.301ab16e.avif",
+            720
+          ],
+          [
+            "/img/llavero-rbf-full-960.1882c781.avif",
+            960
+          ],
+          [
+            "/img/llavero-rbf-full-1080.aed12fbd.avif",
+            1080
+          ]
+        ],
+        "webp": [
+          [
+            "/img/llavero-rbf-full-360.822dcf78.webp",
+            360
+          ],
+          [
+            "/img/llavero-rbf-full-540.3647f990.webp",
+            540
+          ],
+          [
+            "/img/llavero-rbf-full-720.ff1ae4b2.webp",
+            720
+          ],
+          [
+            "/img/llavero-rbf-full-960.3857e4cb.webp",
+            960
+          ],
+          [
+            "/img/llavero-rbf-full-1080.99f59eb5.webp",
+            1080
+          ]
+        ]
+      },
+      "card": {
+        "w": 1875,
+        "h": 2344,
+        "bg": "#956d60",
+        "avif": [
+          [
+            "/img/llavero-rbf-card-360.579ef71d.avif",
+            360
+          ],
+          [
+            "/img/llavero-rbf-card-540.c15eb99d.avif",
+            540
+          ],
+          [
+            "/img/llavero-rbf-card-720.c618460d.avif",
+            720
+          ],
+          [
+            "/img/llavero-rbf-card-960.4f1c52ea.avif",
+            960
+          ],
+          [
+            "/img/llavero-rbf-card-1200.681879fa.avif",
+            1200
+          ]
+        ],
+        "webp": [
+          [
+            "/img/llavero-rbf-card-360.1082f047.webp",
+            360
+          ],
+          [
+            "/img/llavero-rbf-card-540.b5a023dc.webp",
+            540
+          ],
+          [
+            "/img/llavero-rbf-card-720.74c28bc4.webp",
+            720
+          ],
+          [
+            "/img/llavero-rbf-card-960.c1fee169.webp",
+            960
+          ],
+          [
+            "/img/llavero-rbf-card-1200.582f0dc5.webp",
+            1200
+          ]
+        ]
+      }
+    }
+  }
+}

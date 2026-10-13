@@ -1,0 +1,61 @@
+---
+// Botón flotante de WhatsApp. Aparece cuando los botones del hero salen de la pantalla
+// (medido con el scroll, no con IntersectionObserver, que no ve los saltos de ancla) y se
+// oculta con el menú abierto o con el footer a la vista. Sin JS, siempre visible.
+import Icono from './Icono.astro';
+import { MENSAJE_GENERAL, waUrl } from '@/lib/whatsapp';
+---
+
+<a class="flotante" href={waUrl(MENSAJE_GENERAL)} target="_blank" rel="noopener" data-flotante>
+  <Icono name="whatsapp" size={26} />
+  <span class="visualmente-oculto">Escribir por WhatsApp (se abre en otra pestaña)</span>
+</a>
+
+<style>
+  .flotante {
+    position: fixed;
+    right: calc(16px + env(safe-area-inset-right));
+    bottom: calc(16px + env(safe-area-inset-bottom));
+    z-index: 50;
+    display: grid;
+    place-items: center;
+    width: 52px;
+    height: 52px;
+    background: var(--negro);
+    color: var(--blanco);
+    border: 1px solid var(--dorado);
+    --foco: var(--dorado-claro);
+    transition:
+      opacity 200ms ease-out,
+      transform 200ms ease-out,
+      visibility 0s linear 0s,
+      background-color 160ms linear;
+  }
+  .flotante:hover {
+    background: #1a1a1a;
+  }
+  @media (min-width: 1024px) {
+    .flotante {
+      right: calc(24px + env(safe-area-inset-right));
+      bottom: calc(24px + env(safe-area-inset-bottom));
+      width: 56px;
+      height: 56px;
+    }
+  }
+  :global(html.is-js) .flotante:not(:global(.is-visible)) {
+    opacity: 0;
+    transform: translateY(8px);
+    visibility: hidden;
+    pointer-events: none;
+    transition:
+      opacity 160ms ease-in,
+      transform 160ms ease-in,
+      visibility 0s linear 160ms;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .flotante,
+    :global(html.is-js) .flotante:not(:global(.is-visible)) {
+      transform: none;
+    }
+  }
+</style>

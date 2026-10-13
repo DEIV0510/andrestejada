@@ -1,0 +1,36 @@
+---
+import Base from '@/layouts/Base.astro';
+import Icono from '@/components/Icono.astro';
+---
+
+<Base title="Página no encontrada | Andrés Tejada Aviation Shop" description="Esta página no existe. Vuelve al catálogo de uniformes y accesorios de aviación.">
+  <section class="error sup-negro">
+    <div class="contenedor">
+      <p class="rotulo error__codigo tnum">Error 404</p>
+      <h1 class="error__titulo">Página no encontrada.</h1>
+      <a class="btn btn--oro" href="/#uniformes">
+        Volver al catálogo
+        <Icono name="flecha" size={16} class="flecha" />
+      </a>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .error {
+    padding-block: 120px;
+    min-height: 60svh;
+  }
+  .error .contenedor {
+    display: grid;
+    justify-items: start;
+    gap: 20px;
+  }
+  .error__codigo {
+    color: var(--texto-3-osc);
+  }
+  .error__titulo {
+    font: 800 clamp(36px, 8vw, 72px) / 1 var(--font-display);
+    letter-spacing: -0.03em;
+  }
+</style>

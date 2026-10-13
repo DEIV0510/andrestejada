@@ -1,0 +1,78 @@
+---
+// Selector de variante real (hoy: acabado del pin metálico). Funciona como radiogroup:
+// flechas del teclado, aria-checked. El script cambia la foto, el mensaje de WhatsApp
+// y la URL (?acabado=) para que el enlace compartido abra el acabado correcto.
+import type { Producto } from '@/data/catalogo';
+
+interface Props {
+  producto: Producto;
+}
+const { producto: p } = Astro.props;
+const v = p.variantes!;
+---
+
+<fieldset class="selector">
+  <legend class="rotulo selector__t">{v.nombre}</legend>
+  <div class="selector__opciones" role="radiogroup" aria-label={`${v.nombre} de ${p.nombre}`} data-variantes>
+    {
+      v.opciones.map((o, i) => (
+        <button
+          type="button"
+          role="radio"
+          class="selector__op"
+          aria-checked={i === 0 ? 'true' : 'false'}
+          tabindex={i === 0 ? 0 : -1}
+          data-variante={o.id}
+          data-en-mensaje={o.enMensaje}
+        >
+          <span class="selector__muestra" style={`background:${o.muestra}`} aria-hidden="true" />
+          {o.nombre}
+        </button>
+      ))
+    }
+  </div>
+</fieldset>
+
+<style>
+  .selector {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    min-width: 0;
+  }
+  .selector__t {
+    padding: 0;
+    margin-bottom: 10px;
+    color: var(--texto-2);
+  }
+  .selector__opciones {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .selector__op {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 120px;
+    min-height: 44px;
+    padding: 0 16px;
+    border: 1px solid var(--negro);
+    font-weight: 500;
+    transition:
+      background-color 160ms linear,
+      color 160ms linear;
+  }
+  .selector__op:hover {
+    background: var(--hover-claro);
+  }
+  .selector__op[aria-checked='true'] {
+    background: var(--negro);
+    color: var(--blanco);
+  }
+  .selector__muestra {
+    width: 12px;
+    height: 12px;
+    outline: 1px solid rgba(127, 127, 127, 0.5);
+  }
+</style>

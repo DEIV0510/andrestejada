@@ -1,0 +1,96 @@
+---
+// Índice del catálogo: tres celdas con la presilla de cada sección (1, 2 y 3 galones).
+// Sin carrusel ni pestañas: enlaces directos a cada sección.
+import Presilla from './Presilla.astro';
+import Icono from './Icono.astro';
+import { CATEGORIAS } from '@/data/catalogo';
+---
+
+<nav class="indice sup-negro" aria-label="Categorías del catálogo">
+  <ul role="list" class="indice__lista contenedor">
+    {
+      CATEGORIAS.map((c, i) => (
+        <li>
+          <a class="indice__celda" href={`/#${c.id}`}>
+            <span class="indice__n rotulo tnum" aria-hidden="true">
+              {String(i + 1).padStart(2, '0')}
+            </span>
+            <Presilla galones={c.galones} sobreNegro />
+            <span class="indice__nombre">{c.nombre}</span>
+            <Icono name="flecha" size={18} class="flecha indice__flecha" />
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+</nav>
+
+<style>
+  .indice {
+    border-top: 1px solid var(--gris);
+  }
+  .indice__lista {
+    display: grid;
+  }
+  .indice__lista li + li {
+    border-top: 1px solid var(--hilo-osc);
+  }
+  .indice__celda {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    min-height: 56px;
+    padding: 6px 0;
+    transition: background-color 160ms linear;
+  }
+  .indice__n {
+    width: 20px;
+    color: var(--texto-3-osc);
+  }
+  .indice__nombre {
+    font: 600 18px/1.15 var(--font-display);
+    letter-spacing: -0.01em;
+  }
+  .indice__flecha {
+    margin-left: auto;
+    color: var(--texto-2-osc);
+  }
+  @media (min-width: 768px) {
+    .indice__lista {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+    .indice__lista li + li {
+      border-top: 0;
+      border-left: 1px solid var(--gris);
+    }
+    .indice__celda {
+      min-height: 96px;
+      padding: 0 24px;
+    }
+    .indice__lista li:first-child .indice__celda {
+      padding-left: 0;
+    }
+    .indice__nombre {
+      font-size: 20px;
+    }
+  }
+  @media (min-width: 768px) and (max-width: 1023.98px) {
+    .indice__n {
+      display: none;
+    }
+    .indice__celda {
+      gap: 12px;
+      padding: 0 16px;
+    }
+  }
+  @media (min-width: 1024px) {
+    .indice__nombre {
+      font-size: 24px;
+    }
+  }
+  @media (hover: hover) {
+    .indice__celda:hover .indice__flecha {
+      color: var(--dorado);
+    }
+  }
+</style>

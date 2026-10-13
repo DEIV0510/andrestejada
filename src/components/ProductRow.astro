@@ -1,0 +1,120 @@
+---
+// Fila de dotación: producto confirmado SIN foto. Tipografía y una acción; la fila entera
+// abre WhatsApp pidiendo fotos, precio, tallas y envío. Nada de siluetas ni «próximamente».
+// Cuando llegue una foto real (campo `foto` en el catálogo), el producto pasa a tarjeta.
+import Icono from './Icono.astro';
+import { precioTexto, type Producto } from '@/data/catalogo';
+import { waProducto, waUrl } from '@/lib/whatsapp';
+
+interface Props {
+  producto: Producto;
+  grande?: boolean;
+}
+
+const { producto: p, grande = false } = Astro.props;
+const href = p.mensaje ? waUrl(p.mensaje) : waProducto({ nombre: p.nombre, sinFoto: true });
+const precio = precioTexto(p);
+---
+
+<li class:list={['fila', { 'fila--grande': grande }]}>
+  <a class="fila__enlace" href={href} target="_blank" rel="noopener" data-producto={p.id}>
+    <span class="fila__texto">
+      <span class="fila__nombre">{p.nombre}</span>
+      <span class="fila__linea">
+        {p.linea}
+        {precio && <span class="fila__precio tnum">{precio}</span>}
+        {p.tallas && <span class="fila__tallas">Tallas: {p.tallas.join(' · ')}</span>}
+      </span>
+    </span>
+    <span class="fila__accion rotulo">
+      <span class="fila__accion-texto">{p.accion ?? 'Pedir por WhatsApp'}</span>
+      <span class="fila__accion-corta" aria-hidden="true">Pedir</span>
+      <Icono name="flecha" size={16} class="flecha" />
+      <span class="visualmente-oculto">(se abre WhatsApp)</span>
+    </span>
+  </a>
+</li>
+
+<style>
+  .fila + .fila {
+    border-top: 1px solid var(--hilo-fila);
+  }
+  .fila__enlace {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    min-height: 64px;
+    padding: 14px 0;
+    transition: background-color 160ms linear;
+  }
+  .fila__texto {
+    display: grid;
+    gap: 4px;
+    min-width: 0;
+  }
+  .fila__nombre {
+    font: 600 20px/1.15 var(--font-display);
+    letter-spacing: -0.015em;
+    text-wrap: balance;
+  }
+  .fila__linea {
+    font-size: 14px;
+    line-height: 1.4;
+    color: var(--texto-fila);
+  }
+  .fila__precio,
+  .fila__tallas {
+    display: block;
+    margin-top: 2px;
+    color: currentColor;
+  }
+  .fila__accion {
+    margin-left: auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    flex: none;
+    min-height: 44px;
+  }
+  .fila__accion-texto {
+    display: none;
+  }
+  @media (hover: hover) {
+    .fila__enlace:hover {
+      background: var(--hover-fila);
+    }
+  }
+
+  @media (min-width: 768px) {
+    .fila__enlace {
+      min-height: 88px;
+      margin-inline: -16px;
+      padding: 16px;
+      gap: 32px;
+    }
+    .fila__nombre {
+      font-size: 28px;
+    }
+    .fila__linea {
+      font-size: 15px;
+    }
+    .fila__accion-texto {
+      display: inline;
+    }
+    .fila__accion-corta {
+      display: none;
+    }
+    .fila--grande .fila__enlace {
+      min-height: 136px;
+    }
+    .fila--grande .fila__nombre {
+      font-size: 34px;
+      font-weight: 700;
+    }
+  }
+  @media (min-width: 1024px) {
+    .fila--grande .fila__nombre {
+      font-size: 40px;
+    }
+  }
+</style>

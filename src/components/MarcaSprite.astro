@@ -1,0 +1,22 @@
+---
+// Trazados del logo (vectorizado del PNG original con scripts/marca.mjs), una sola vez
+// por página. <Logo> los reutiliza con <use>: el negro del logo es currentColor
+// (blanco sobre fondo negro) y el dorado es el del logo original.
+import marca from '@/data/marca.json';
+const piezas = Object.entries(marca.trazados) as [string, string][];
+---
+
+<svg class="marca-sprite" width="0" height="0" aria-hidden="true" focusable="false">
+  <defs>
+    {piezas.map(([id, d]) => <path id={`at-${id}`} d={d} fill-rule="evenodd" />)}
+  </defs>
+</svg>
+
+<style>
+  .marca-sprite {
+    position: absolute;
+    width: 0;
+    height: 0;
+    overflow: hidden;
+  }
+</style>

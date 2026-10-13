@@ -1,0 +1,100 @@
+---
+// Instagram: bloque estático con fotos locales y enlace al perfil oficial. Sin feed
+// incrustado ni API (no hay autorización) y sin cifras de seguidores.
+import Foto from './Foto.astro';
+import Icono from './Icono.astro';
+import { INSTAGRAM } from '@/lib/contacto';
+import type { MediaId } from '@/data/catalogo';
+
+const FOTOS: { id: MediaId; pos: string }[] = [
+  { id: 'pines-esmaltados', pos: '50% 62%' },
+  { id: 'llavero-rbf', pos: '50% 45%' },
+  { id: 'pin-avion-plateado', pos: '50% 58%' },
+];
+---
+
+<section class="ig sup-blanco" aria-labelledby="ig-titulo">
+  <div class="contenedor ig__reticula">
+    <div class="ig__texto">
+      <p class="rotulo texto-2">Instagram</p>
+      <h2 id="ig-titulo" class="ig__usuario">
+        <a href={INSTAGRAM.url} target="_blank" rel="noopener">@{INSTAGRAM.usuario}</a>
+      </h2>
+      <p class="ig__bio texto-2">{INSTAGRAM.bio}</p>
+      <a class="btn btn--contorno ig__cta" href={INSTAGRAM.url} target="_blank" rel="noopener">
+        <Icono name="instagram" size={18} />
+        Seguir en Instagram
+      </a>
+    </div>
+    <ul role="list" class="ig__fotos">
+      {
+        FOTOS.map((f) => (
+          <li>
+            <a href={INSTAGRAM.url} target="_blank" rel="noopener" tabindex="-1" aria-hidden="true">
+              <Foto id={f.id} recorte="full" sizes="(min-width: 1024px) 220px, 31vw" class="ig__foto" attrs={{ style: `object-position:${f.pos}`, alt: '' }} />
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>
+
+<style>
+  .ig {
+    padding-block: var(--seccion-y);
+  }
+  .ig__reticula {
+    display: grid;
+    gap: 32px;
+  }
+  .ig__texto {
+    display: grid;
+    justify-items: start;
+    gap: 12px;
+  }
+  .ig__usuario {
+    font: 800 28px/1.05 var(--font-display);
+    letter-spacing: -0.02em;
+    overflow-wrap: anywhere;
+  }
+  .ig__usuario a {
+    background-image: linear-gradient(currentColor, currentColor);
+    background-size: 0% 2px;
+    background-position: 0 100%;
+    background-repeat: no-repeat;
+    transition: background-size 220ms ease-out;
+  }
+  .ig__usuario a:hover {
+    background-size: 100% 2px;
+  }
+  .ig__bio {
+    max-width: 44ch;
+  }
+  .ig__cta {
+    margin-top: 8px;
+  }
+  .ig__fotos {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--hilo);
+    border: 1px solid var(--hilo);
+  }
+  .ig__foto {
+    aspect-ratio: 1;
+  }
+  .ig__foto :global(img) {
+    object-fit: cover;
+  }
+  @media (min-width: 1024px) {
+    .ig__reticula {
+      grid-template-columns: 5fr 7fr;
+      align-items: center;
+      column-gap: 48px;
+    }
+    .ig__usuario {
+      font-size: 44px;
+    }
+  }
+</style>

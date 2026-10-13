@@ -1,0 +1,109 @@
+---
+// Pantalla de carga: solo la 1.ª visita a la portada (lo decide el script del <head>).
+// Fotograma 0: logo ya visible (si todo arrancara invisible, Chrome dejaría la pantalla
+// en blanco). El nombre aparece de izquierda a derecha, una línea dorada recorre la
+// trayectoria y avanza solo con hitos reales (documento, tipografías, foto principal).
+// Salida: telón hacia arriba (clip-path). Nunca más de 1,4 s; sin bloquear el scroll.
+import Logo from './Logo.astro';
+---
+
+<div class="intro sup-negro" aria-hidden="true">
+  <div class="intro__marca">
+    <Logo version="compacto" alto={44} decorativo class="intro__logo" />
+    <span class="intro__velo"></span>
+  </div>
+  <div class="intro__ruta">
+    <span class="intro__avance"></span>
+  </div>
+</div>
+
+<style>
+  .intro {
+    display: none;
+  }
+  :global(html.is-intro) .intro {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    display: grid;
+    place-content: center;
+    justify-items: center;
+    gap: 28px;
+    background: var(--negro);
+    color: var(--blanco);
+    pointer-events: none;
+    /* Respaldo sin JS a mitad de camino: se cierra sola. */
+    animation: intro-telon 360ms var(--ease-in-out) 1.6s forwards;
+  }
+  :global(html.is-intro-out) .intro {
+    animation: intro-telon 400ms var(--ease-in-out) forwards;
+  }
+  @keyframes intro-telon {
+    to {
+      clip-path: inset(0 0 100% 0);
+      visibility: hidden;
+    }
+  }
+
+  .intro__marca {
+    position: relative;
+    width: min(76vw, 360px);
+  }
+  .intro__logo {
+    width: 100%;
+    height: auto;
+  }
+  /* El velo tapa el nombre (a la derecha del emblema) y se retira hacia la derecha. */
+  .intro__velo {
+    position: absolute;
+    top: -2px;
+    bottom: -2px;
+    left: 31.5%;
+    right: -2px;
+    background: var(--negro);
+    transform-origin: 100% 50%;
+    animation: intro-nombre 560ms var(--ease-out) 90ms both;
+  }
+  @keyframes intro-nombre {
+    from {
+      transform: scaleX(1);
+    }
+    to {
+      transform: scaleX(0);
+    }
+  }
+
+  /* Trayectoria: hilo fino y avance dorado */
+  .intro__ruta {
+    position: relative;
+    width: min(76vw, 360px);
+    height: 1px;
+    background: var(--hilo-osc);
+    overflow: hidden;
+  }
+  /* La línea entra desde la izquierda como una trayectoria; su punta, más clara. */
+  .intro__avance {
+    position: absolute;
+    inset: 0;
+    background: var(--dorado);
+    transform: translateX(calc((var(--intro-p, 0.06) - 1) * 100%));
+    transition: transform 360ms var(--ease-out);
+  }
+  .intro__avance::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 28px;
+    height: 100%;
+    background: var(--dorado-claro);
+  }
+  :global(html.is-intro-out) .intro__marca,
+  :global(html.is-intro-out) .intro__ruta {
+    transition:
+      opacity 200ms ease-in,
+      transform 200ms ease-in;
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+</style>

@@ -1,0 +1,242 @@
+---
+// Hero: negro (saco) con el mensaje y los dos CTA; blanco (camisa) a sangre con las
+// alas de piloto reales. En móvil, el producto primero y el mensaje enseguida.
+// La foto es el LCP: no se anima nunca y se precarga desde Base.
+import Foto from './Foto.astro';
+import Icono from './Icono.astro';
+import { MARCA } from '@/lib/contacto';
+import { MENSAJE_GENERAL, waUrl } from '@/lib/whatsapp';
+import { HERO_SIZES } from '@/lib/hero';
+---
+
+<section id="inicio" class="hero" data-ancla aria-labelledby="hero-titulo">
+  <div class="hero__panel sup-blanco">
+    <a class="hero__pieza" href="/catalogo/alas-de-piloto-piper/" aria-label="Ver la pieza: alas de piloto Piper">
+      <Foto id="alas-piper" recorte="card" sizes={HERO_SIZES} priority class="hero__foto" />
+    </a>
+    <span class="hero__marcas" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+    <a class="hero__pie rotulo" href="/catalogo/alas-de-piloto-piper/">
+      Alas de piloto Piper <span class="hero__pie-sep" aria-hidden="true"></span> Ver pieza
+      <Icono name="flecha" size={14} class="flecha" />
+    </a>
+  </div>
+
+  <div class="hero__texto sup-negro">
+    <div class="hero__bloque">
+      <p class="rotulo hero__rotulo hero-entra" style="--d:0">Uniformes · Accesorios · Aviones a escala</p>
+      <h1 id="hero-titulo" class="hero__titulo hero-entra" style="--d:1">
+        El estándar de <span class="hero__linea">tu vocación.</span>
+      </h1>
+      <p class="hero__bajada hero-entra" style="--d:2">Uniformes y accesorios para quienes llevan la aviación en su esencia.</p>
+      <div class="hero__acciones hero-entra" style="--d:3" data-hero-cta>
+        <a class="btn btn--oro" href="/#uniformes">
+          Explorar catálogo
+          <Icono name="flecha" size={16} class="flecha" />
+        </a>
+        <a class="btn btn--contorno" href={waUrl(MENSAJE_GENERAL)} target="_blank" rel="noopener">
+          <Icono name="whatsapp" size={18} />
+          Comprar por WhatsApp
+        </a>
+      </div>
+      <p class="hero__nota hero-entra" style="--d:4">{MARCA.envios}. {MARCA.tienda}.</p>
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero {
+    display: grid;
+    background: var(--negro);
+  }
+
+  /* ── Panel de la foto (camisa blanca) ── */
+  .hero__panel {
+    position: relative;
+    display: grid;
+    place-items: center;
+    aspect-ratio: 390 / 176;
+    overflow: hidden;
+  }
+  .hero__pieza {
+    display: block;
+    width: 84%;
+  }
+  .hero__foto {
+    aspect-ratio: 1155 / 578;
+  }
+  .hero__pie {
+    display: none;
+  }
+  /* Marcas de registro: cuatro esquinas finas, como en una plancha de impresión */
+  .hero__marcas {
+    position: absolute;
+    inset: 12px;
+    pointer-events: none;
+  }
+  .hero__marcas i {
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    border: 0 solid var(--gris);
+  }
+  .hero__marcas i:nth-child(1) {
+    top: 0;
+    left: 0;
+    border-width: 1px 0 0 1px;
+  }
+  .hero__marcas i:nth-child(2) {
+    top: 0;
+    right: 0;
+    border-width: 1px 1px 0 0;
+  }
+  .hero__marcas i:nth-child(3) {
+    bottom: 0;
+    left: 0;
+    border-width: 0 0 1px 1px;
+  }
+  .hero__marcas i:nth-child(4) {
+    bottom: 0;
+    right: 0;
+    border-width: 0 1px 1px 0;
+  }
+
+  /* ── Bloque de texto (saco negro) ── */
+  .hero__texto {
+    padding: 28px var(--margen) 36px;
+  }
+  .hero__rotulo {
+    color: var(--texto-3-osc);
+    white-space: nowrap;
+  }
+  .hero__titulo {
+    margin-top: 14px;
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: clamp(34px, 10vw, 40px);
+    line-height: 1;
+    letter-spacing: -0.03em;
+  }
+  .hero__linea {
+    display: block;
+  }
+  .hero__bajada {
+    margin-top: 14px;
+    max-width: 34ch;
+    color: var(--texto-2-osc);
+  }
+  .hero__acciones {
+    margin-top: 24px;
+    display: grid;
+    gap: 12px;
+  }
+  .hero__acciones .btn {
+    width: 100%;
+  }
+  .hero__nota {
+    margin-top: 16px;
+    font-size: 13px;
+    color: var(--texto-3-osc);
+  }
+
+  @media (min-width: 768px) {
+    .hero__panel {
+      aspect-ratio: 768 / 300;
+    }
+    .hero__pieza {
+      width: min(70%, 560px);
+    }
+    .hero__texto {
+      padding: 48px var(--margen) 56px;
+    }
+    .hero__titulo {
+      font-size: 56px;
+    }
+    .hero__bajada {
+      max-width: 44ch;
+      font-size: 18px;
+    }
+    .hero__acciones {
+      display: flex;
+      flex-wrap: wrap;
+    }
+    .hero__acciones .btn {
+      width: auto;
+    }
+  }
+
+  /* ── Escritorio: 6 + 6 columnas, el blanco llega al borde derecho ── */
+  @media (min-width: 1024px) {
+    .hero {
+      grid-template-columns: minmax(0, 7fr) minmax(0, 6fr);
+      height: clamp(560px, calc(100svh - var(--header-h)), 720px);
+    }
+    .hero__texto {
+      grid-column: 1;
+      grid-row: 1;
+      /* el texto se alinea con el borde izquierdo del contenedor de 1200 px */
+      padding: 0 40px 0 max(var(--margen), calc((100% * 13 / 7 - var(--contenedor)) / 2));
+    }
+    .hero__bloque {
+      padding-top: clamp(56px, 16vh, 148px);
+    }
+    .hero__titulo {
+      margin-top: 20px;
+      font-size: clamp(56px, 5.6vw, 72px);
+    }
+    .hero__bajada {
+      margin-top: 20px;
+    }
+    .hero__acciones {
+      margin-top: 36px;
+    }
+    .hero__panel {
+      grid-column: 2;
+      grid-row: 1;
+      aspect-ratio: auto;
+      height: 100%;
+      place-items: start center;
+    }
+    .hero__pieza {
+      width: min(78%, 560px);
+      /* centro de la pieza un poco por encima de la mitad (44 % del alto) */
+      align-self: center;
+      transform: translateY(-6%);
+    }
+    .hero__marcas {
+      inset: 24px;
+    }
+    .hero__marcas i {
+      width: 16px;
+      height: 16px;
+    }
+    .hero__pie {
+      position: absolute;
+      left: 48px;
+      bottom: 36px;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      min-height: 44px;
+      color: var(--negro);
+    }
+    .hero__pie-sep {
+      width: 24px;
+      height: 1px;
+      background: var(--gris);
+    }
+  }
+
+  /* ── Entrada: solo con JS y movimiento permitido; nunca toca la foto (LCP) ── */
+  @media (prefers-reduced-motion: no-preference) {
+    :global(html.is-ready) .hero-entra {
+      animation: hero-entra 640ms var(--ease-out) backwards;
+      animation-delay: calc(60ms + var(--d, 0) * 90ms);
+    }
+  }
+  @keyframes hero-entra {
+    from {
+      opacity: 0;
+      transform: translateY(16px);
+    }
+  }
+</style>

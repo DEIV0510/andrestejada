@@ -1,0 +1,44 @@
+---
+// Logo oficial (vectorizado, sin redibujar). Versiones:
+//   compacto → emblema + ANDRES TEJADA + AVIATION SHOP (header, preloader, footer)
+//   completo → con la regla y «UNIFORMES • ACCESORIOS • AVIONES A ESCALA»
+//   emblema  → solo alas y hélice
+// El negro toma `color` (currentColor): sobre negro, poner color blanco.
+import marca from '@/data/marca.json';
+
+type Version = keyof typeof marca.versiones;
+interface Props {
+  version?: Version;
+  class?: string;
+  /** Alto en px (el ancho sale de la proporción real). */
+  alto?: number;
+  /** Sin nombre accesible cuando va junto a un texto que ya lo dice. */
+  decorativo?: boolean;
+}
+
+const { version = 'compacto', class: cls, alto = 40, decorativo = false } = Astro.props;
+const v = marca.versiones[version];
+const ORO_PIEZAS = new Set(['emblema', 'aviation']);
+const ancho = Math.round((alto * v.w) / v.h);
+---
+
+<svg
+  class:list={['logo', cls]}
+  viewBox={v.vb}
+  width={ancho}
+  height={alto}
+  role={decorativo ? undefined : 'img'}
+  aria-label={decorativo ? undefined : 'Andrés Tejada Aviation Shop'}
+  aria-hidden={decorativo ? 'true' : undefined}
+  focusable="false"
+>
+  {
+    v.piezas.map((p) =>
+      ORO_PIEZAS.has(p) ? (
+        <use href={`#at-${p}`} class="logo__oro" style={`fill:var(--logo-oro, ${marca.oro})`} />
+      ) : (
+        <use href={`#at-${p}`} fill="currentColor" />
+      ),
+    )
+  }
+</svg>

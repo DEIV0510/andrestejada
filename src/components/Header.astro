@@ -1,0 +1,288 @@
+---
+// Cabecera negra fija (sin transparencias). Escritorio: menú completo + WhatsApp.
+// Móvil y tablet: logo · WhatsApp · MENÚ (cajón a pantalla completa, hermano del header
+// para que el header sticky no lo atrape).
+import Logo from './Logo.astro';
+import Icono from './Icono.astro';
+import { INSTAGRAM } from '@/lib/contacto';
+import { MENSAJE_GENERAL, waUrl } from '@/lib/whatsapp';
+import { NAV } from '@/lib/nav';
+
+const wa = waUrl(MENSAJE_GENERAL);
+---
+
+<header class="header sup-negro" data-header>
+  <div class="header__barra contenedor">
+    <a href="/#inicio" class="header__logo" aria-label="Andrés Tejada Aviation Shop, inicio">
+      <Logo version="compacto" alto={40} decorativo class="header__logo-svg" />
+    </a>
+    <nav class="header__nav" aria-label="Principal">
+      <ul role="list">
+        {
+          NAV.map((l) => (
+            <li>
+              <a href={l.href} data-spy={l.id}>
+                {l.texto}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+    <a class="header__wa" href={wa} target="_blank" rel="noopener" aria-label="Escribir por WhatsApp (se abre en otra pestaña)">
+      <Icono name="whatsapp" size={22} />
+    </a>
+    <button class="header__menu" type="button" aria-expanded="false" aria-controls="menu-movil" data-menu-boton>
+      <span data-menu-texto>Menú</span>
+    </button>
+  </div>
+</header>
+
+<div id="menu-movil" class="menu sup-negro" hidden data-menu>
+  <nav class="menu__nav contenedor" aria-label="Menú">
+    <ol role="list">
+      {
+        NAV.map((l, i) => (
+          <li style={`--i:${i}`}>
+            <a href={l.href} data-menu-enlace>
+              <span class="menu__n tnum" aria-hidden="true">
+                {String(i + 1).padStart(2, '0')}
+              </span>
+              {l.texto}
+            </a>
+          </li>
+        ))
+      }
+    </ol>
+    <div class="menu__pie">
+      <a class="btn btn--oro menu__cta" href={wa} target="_blank" rel="noopener">
+        <Icono name="whatsapp" size={20} />
+        Comprar por WhatsApp
+      </a>
+      <a class="menu__ig" href={INSTAGRAM.url} target="_blank" rel="noopener">
+        <Icono name="instagram" size={18} />@{INSTAGRAM.usuario}
+      </a>
+    </div>
+  </nav>
+</div>
+
+<style>
+  .header {
+    position: sticky;
+    top: 0;
+    z-index: 60;
+    height: var(--header-h);
+    background: var(--negro);
+    border-bottom: 1px solid transparent;
+    transition: border-color 200ms linear;
+  }
+  .header:global(.is-scrolled) {
+    border-bottom-color: var(--hilo-osc);
+  }
+  .header__barra {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .header__logo {
+    display: block;
+    margin-right: auto;
+    padding: 6px 0;
+  }
+  .header__logo-svg {
+    height: 26px;
+    width: auto;
+  }
+  @media (min-width: 390px) {
+    .header__logo-svg {
+      height: 28px;
+    }
+  }
+  @media (min-width: 768px) {
+    .header__logo-svg {
+      height: 34px;
+    }
+  }
+  @media (min-width: 1024px) {
+    .header__logo-svg {
+      height: 34px;
+    }
+  }
+  @media (min-width: 1280px) {
+    .header__logo-svg {
+      height: 40px;
+    }
+  }
+
+  .header__nav {
+    display: none;
+  }
+  @media (min-width: 1024px) {
+    .header__nav {
+      display: block;
+      margin-right: clamp(12px, 2vw, 32px);
+    }
+    .header__nav ul {
+      display: flex;
+      gap: clamp(16px, 1.9vw, 32px);
+    }
+    .header__nav a {
+      position: relative;
+      display: block;
+      padding: 12px 0;
+      font: 600 12px/1 var(--font-text);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      white-space: nowrap;
+      color: var(--texto-2-osc);
+      transition: color 160ms linear;
+    }
+    .header__nav a::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 4px;
+      height: 1px;
+      background: currentColor;
+      transform: scaleX(0);
+      transform-origin: 0 50%;
+      transition: transform 200ms ease-out;
+    }
+    .header__nav a:hover,
+    .header__nav a[aria-current] {
+      color: var(--blanco);
+    }
+    .header__nav a:hover::after {
+      transform: none;
+    }
+    /* Sección activa: barra dorada de 2 px */
+    .header__nav a[aria-current]::after {
+      height: 2px;
+      bottom: 3px;
+      background: var(--dorado);
+      transform: none;
+    }
+  }
+
+  .header__wa {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    flex: none;
+    color: var(--blanco);
+    border: 1px solid rgba(255, 255, 255, 0.24);
+    transition:
+      border-color 160ms linear,
+      background-color 160ms linear;
+  }
+  .header__wa:hover {
+    border-color: var(--dorado);
+  }
+  @media (min-width: 1024px) {
+    .header__wa {
+      width: 40px;
+      height: 40px;
+    }
+  }
+
+  .header__menu {
+    min-width: 64px;
+    height: 44px;
+    padding: 0 0 0 12px;
+    font: 600 12px/1 var(--font-text);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    text-align: right;
+    color: var(--blanco);
+  }
+  @media (min-width: 1024px) {
+    .header__menu {
+      display: none;
+    }
+  }
+
+  /* ── Cajón móvil ── */
+  .menu {
+    position: fixed;
+    inset: 0;
+    z-index: 55;
+    padding-top: var(--header-h);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    background: var(--negro);
+    clip-path: inset(0 0 100% 0);
+    transition: clip-path 200ms ease-in;
+  }
+  .menu:global(.is-open) {
+    clip-path: inset(0);
+    transition: clip-path 280ms var(--ease-out);
+  }
+  @media (min-width: 1024px) {
+    .menu {
+      display: none !important;
+    }
+  }
+  .menu__nav {
+    min-height: 100%;
+    display: flex;
+    flex-direction: column;
+    padding-top: 8px;
+    padding-bottom: calc(24px + env(safe-area-inset-bottom));
+  }
+  .menu__nav ol {
+    border-top: 1px solid var(--gris);
+  }
+  .menu__nav li {
+    border-bottom: 1px solid var(--hilo-osc);
+    opacity: 0;
+    transition: opacity 180ms linear;
+  }
+  .menu:global(.is-open) li {
+    opacity: 1;
+    transition-delay: calc(80ms + var(--i) * 30ms);
+  }
+  .menu__nav li a {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    padding: 18px 0;
+    font: 700 28px/1.1 var(--font-display);
+    letter-spacing: -0.02em;
+  }
+  .menu__n {
+    font: 500 12px/1 var(--font-text);
+    letter-spacing: 0.08em;
+    color: var(--texto-3-osc);
+  }
+  .menu__pie {
+    margin-top: auto;
+    padding-top: 32px;
+    display: grid;
+    gap: 16px;
+  }
+  .menu__cta {
+    width: 100%;
+  }
+  .menu__ig {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 44px;
+    font-weight: 500;
+    color: var(--texto-2-osc);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .menu,
+    .menu:global(.is-open) {
+      clip-path: none;
+      opacity: 0;
+      transition: opacity 120ms linear;
+    }
+    .menu:global(.is-open) {
+      opacity: 1;
+    }
+  }
+</style>

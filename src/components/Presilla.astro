@@ -1,0 +1,66 @@
+---
+// La presilla: único recurso gráfico del sitio. Cuerpo negro con el extremo del cuello
+// cortado a 30° y galones dorados de borde a borde (1 a 4). El 4 repite las cuatro
+// franjas del emblema. Solo va en: preloader, índice, cabeceras del catálogo y marca.
+interface Props {
+  galones: 1 | 2 | 3 | 4;
+  /** Ancho en px; la proporción es siempre 3:1. */
+  ancho?: number;
+  /** Contorno gris para que se lea sobre fondo negro. */
+  sobreNegro?: boolean;
+  /** Los galones crecen al entrar en pantalla (cabeceras). */
+  animada?: boolean;
+  class?: string;
+}
+
+const { galones, ancho = 48, sobreNegro = false, animada = false, class: cls } = Astro.props;
+// Geometría en unidades de 48×16.
+const corte = 16 * Math.tan((30 * Math.PI) / 180); // ≈ 9.24: extremo del cuello
+const cuerpo = `M${corte.toFixed(2)} 0H48V16H0Z`;
+const g = Array.from({ length: galones }, (_, i) => 48 - 4 - 3 - i * 6);
+---
+
+<svg
+  class:list={['presilla', { 'presilla--animada': animada, 'presilla--negro': sobreNegro }, cls]}
+  viewBox="0 0 48 16"
+  width={ancho}
+  height={Math.round(ancho / 3)}
+  aria-hidden="true"
+  focusable="false"
+>
+  <path d={cuerpo} class="presilla__cuerpo" />
+  {g.map((x, i) => <rect x={x} y="0" width="3" height="16" class="presilla__galon" style={`--i:${i}`} />)}
+</svg>
+
+<style>
+  .presilla {
+    display: block;
+    flex: none;
+    overflow: visible;
+  }
+  .presilla__cuerpo {
+    fill: var(--negro);
+  }
+  .presilla--negro .presilla__cuerpo {
+    stroke: var(--gris);
+    stroke-width: 1;
+    vector-effect: non-scaling-stroke;
+  }
+  .presilla__galon {
+    fill: var(--dorado);
+    transform-box: fill-box;
+    transform-origin: 50% 100%;
+  }
+  /* Animación de cabecera: solo con JS y sin reducción de movimiento.
+     El script añade .is-visible al entrar en pantalla. */
+  @media (prefers-reduced-motion: no-preference) {
+    :global(html.is-js) .presilla--animada .presilla__galon {
+      transform: scaleY(0);
+      transition: transform 220ms cubic-bezier(0.2, 0.7, 0.2, 1);
+      transition-delay: calc(var(--i) * 70ms);
+    }
+    :global(html.is-js) .presilla--animada:global(.is-visible) .presilla__galon {
+      transform: none;
+    }
+  }
+</style>

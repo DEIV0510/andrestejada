@@ -1,0 +1,186 @@
+---
+// Sección del catálogo (una por categoría). Cabecera con la presilla de la sección;
+// los productos con foto van en tarjetas pegadas por filetes y los que aún no tienen
+// foto, en filas de dotación. Todo sale de src/data/catalogo.ts.
+import Presilla from './Presilla.astro';
+import ProductCard from './ProductCard.astro';
+import ProductRow from './ProductRow.astro';
+import { porCategoria, type Categoria } from '@/data/catalogo';
+
+interface Props {
+  categoria: Categoria;
+  fondo: 'negro' | 'blanco';
+  /** Las filas (sin foto) antes que las tarjetas. */
+  filasPrimero?: boolean;
+  /** Rótulo sobre las tarjetas (p. ej. «Coleccionismo»). */
+  rotuloTarjetas?: string;
+  /** Filas grandes (uniformes). */
+  filasGrandes?: boolean;
+  /** Escritorio: cabecera a la izquierda y productos a la derecha. */
+  lateral?: boolean;
+}
+
+const { categoria: c, fondo, filasPrimero = false, rotuloTarjetas, filasGrandes = false, lateral = false } = Astro.props;
+const productos = porCategoria(c.id);
+const tarjetas = productos.filter((p) => p.foto);
+const filas = productos.filter((p) => !p.foto);
+const anchas = tarjetas.every((p) => p.foto?.startsWith('alas-'));
+const tituloId = `titulo-${c.id}`;
+
+// sizes según la retícula: alas 2 por fila (1 en móvil); verticales 3 por fila (2 en móvil).
+const SIZES_ANCHO = '(min-width: 1264px) 516px, (min-width: 768px) calc(43vw - 40px), 86vw';
+const SIZES_VERTICAL = '(min-width: 1264px) 400px, (min-width: 768px) calc(33vw - 30px), 50vw';
+const SIZES_VERTICAL_DOBLE = '(min-width: 1264px) 400px, (min-width: 768px) calc(33vw - 30px), 100vw';
+---
+
+<section id={c.id} class:list={['catalogo', `sup-${fondo}`, { 'catalogo--lateral': lateral }]} data-ancla data-seccion aria-labelledby={tituloId}>
+  <div class="contenedor catalogo__reticula">
+    <header class="catalogo__cabecera">
+      <Presilla galones={c.galones} sobreNegro={fondo === 'negro'} animada />
+      <h2 id={tituloId} class="titulo-seccion">{c.titulo}</h2>
+      <p class="catalogo__linea texto-2">{c.linea}</p>
+    </header>
+
+    <div class="catalogo__cuerpo">
+      {
+        filasPrimero && filas.length > 0 && (
+          <ul role="list" class="catalogo__bloque catalogo__filas">
+            {filas.map((p) => (
+              <ProductRow producto={p} grande={filasGrandes} />
+            ))}
+          </ul>
+        )
+      }
+      {
+        tarjetas.length > 0 && (
+          <div class="catalogo__bloque catalogo__bloque--tarjetas">
+            {rotuloTarjetas && <p class="rotulo catalogo__rotulo">{rotuloTarjetas}</p>}
+            <div class:list={['rejilla', anchas ? 'rejilla--ancha' : 'rejilla--vertical']}>
+              {tarjetas.map((p, i) => (
+                <ProductCard
+                  producto={p}
+                  formato={anchas ? 'ancho' : 'vertical'}
+                  sizes={anchas ? SIZES_ANCHO : i === tarjetas.length - 1 && tarjetas.length % 2 === 1 ? SIZES_VERTICAL_DOBLE : SIZES_VERTICAL}
+                />
+              ))}
+            </div>
+          </div>
+        )
+      }
+      {
+        !filasPrimero && filas.length > 0 && (
+          <ul role="list" class="catalogo__bloque catalogo__filas">
+            {filas.map((p) => (
+              <ProductRow producto={p} grande={filasGrandes} />
+            ))}
+          </ul>
+        )
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .catalogo {
+    padding-block: var(--seccion-y);
+    --hilo-fila: var(--hilo);
+    --texto-fila: var(--texto-2);
+    --hover-fila: var(--hover-claro);
+    --linea-fuerte: var(--negro);
+  }
+  .catalogo.sup-negro {
+    --hilo-fila: var(--hilo-osc);
+    --texto-fila: var(--texto-2-osc);
+    --hover-fila: var(--hover-osc);
+    --linea-fuerte: var(--gris);
+  }
+  .catalogo__cabecera {
+    display: grid;
+    gap: 14px;
+    justify-items: start;
+    margin-bottom: 32px;
+  }
+  .catalogo__linea {
+    max-width: 52ch;
+  }
+  @media (min-width: 1024px) {
+    .catalogo__cabecera {
+      gap: 18px;
+      margin-bottom: 48px;
+    }
+  }
+
+  .catalogo__cuerpo {
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+  }
+  .catalogo__rotulo {
+    margin-bottom: 14px;
+    color: var(--texto-fila);
+  }
+
+  /* Filas: la lista abre y cierra con un hilo fuerte */
+  .catalogo__filas {
+    border-top: 1px solid var(--linea-fuerte);
+    border-bottom: 1px solid var(--linea-fuerte);
+  }
+
+  /* Rejillas: celdas pegadas con filetes de 1 px (gap + fondo del hilo) */
+  .rejilla {
+    display: grid;
+    gap: 1px;
+    background: var(--hilo-rejilla, var(--hilo));
+    border: 1px solid var(--hilo-rejilla, var(--hilo));
+  }
+  .sup-negro .rejilla {
+    --hilo-rejilla: var(--gris);
+  }
+  .rejilla--vertical {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  /* En móvil, la última tarjeta impar ocupa las dos columnas en 4:3 */
+  .rejilla--vertical > :global(.tarjeta:last-child:nth-child(odd)) {
+    grid-column: 1 / -1;
+  }
+  .rejilla--vertical > :global(.tarjeta:last-child:nth-child(odd) .tarjeta__foto) {
+    aspect-ratio: 4 / 3;
+  }
+  .rejilla--vertical > :global(.tarjeta:last-child:nth-child(odd) .tarjeta__img img) {
+    object-position: 50% 38%;
+  }
+  @media (min-width: 768px) {
+    .rejilla--ancha {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .rejilla--vertical {
+      grid-template-columns: repeat(3, 1fr);
+    }
+    .rejilla--vertical > :global(.tarjeta:last-child:nth-child(odd)) {
+      grid-column: auto;
+    }
+    .rejilla--vertical > :global(.tarjeta:last-child:nth-child(odd) .tarjeta__foto) {
+      aspect-ratio: 4 / 5;
+    }
+  }
+  @media (min-width: 1024px) {
+    .catalogo__cuerpo {
+      gap: 56px;
+    }
+    .catalogo--lateral .catalogo__reticula {
+      display: grid;
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+      column-gap: 24px;
+      align-items: start;
+    }
+    .catalogo--lateral .catalogo__cabecera {
+      grid-column: 1 / span 4;
+      margin-bottom: 0;
+      position: sticky;
+      top: calc(var(--header-h) + 32px);
+    }
+    .catalogo--lateral .catalogo__cuerpo {
+      grid-column: 5 / span 8;
+    }
+  }
+</style>

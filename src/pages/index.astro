@@ -1,0 +1,29 @@
+---
+import Base from '@/layouts/Base.astro';
+import Hero from '@/components/Hero.astro';
+import CategoryNavigation from '@/components/CategoryNavigation.astro';
+import ProductGrid from '@/components/ProductGrid.astro';
+import BrandStory from '@/components/BrandStory.astro';
+import InstagramSection from '@/components/InstagramSection.astro';
+import { CATEGORIAS } from '@/data/catalogo';
+import { pictureData } from '@/lib/media';
+import { HERO_SIZES } from '@/lib/hero';
+
+const [uniformes, accesorios, aviones] = CATEGORIAS;
+const hero = pictureData('alas-piper', 'card');
+---
+
+<Base
+  title="Andrés Tejada Aviation Shop | Uniformes de piloto y accesorios de aviación"
+  description="Uniformes de piloto, alas, presillas, corbatas, zapatos, pines y aviones a escala. Tienda virtual con envíos a toda Colombia. Pide por WhatsApp."
+  preload={{ srcset: hero.avif, sizes: HERO_SIZES }}
+  intro
+>
+  <Hero />
+  <CategoryNavigation />
+  <ProductGrid categoria={uniformes} fondo="blanco" filasGrandes lateral />
+  <ProductGrid categoria={accesorios} fondo="negro" />
+  <ProductGrid categoria={aviones} fondo="blanco" filasPrimero rotuloTarjetas="Coleccionismo" />
+  <BrandStory />
+  <InstagramSection />
+</Base>

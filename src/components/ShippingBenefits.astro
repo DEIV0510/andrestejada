@@ -1,0 +1,65 @@
+---
+// Franja de confianza: SOLO datos confirmados por el cliente. Sin tiempos de entrega,
+// transportadoras, garantías, devoluciones ni formas de pago (no están confirmados).
+const DATOS = [
+  { t: 'Tienda virtual', d: 'Compra desde cualquier lugar del país.' },
+  { t: 'Envíos a toda Colombia', d: 'Costo y tiempo se confirman por WhatsApp.' },
+  { t: 'Atención directa por WhatsApp', d: 'Hablas con la tienda, sin intermediarios.' },
+  { t: 'Disponibilidad y detalles', d: 'Consulta cada producto antes de pedir.' },
+];
+---
+
+<ul role="list" class="envios" aria-label="Cómo compras">
+  {
+    DATOS.map((x) => (
+      <li class="envios__dato">
+        <span class="envios__t">{x.t}</span>
+        <span class="envios__d">{x.d}</span>
+      </li>
+    ))
+  }
+</ul>
+
+<style>
+  .envios {
+    display: grid;
+    border-top: 1px solid var(--gris);
+  }
+  .envios__dato {
+    display: grid;
+    gap: 2px;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--hilo-osc);
+  }
+  .envios__t {
+    font: 600 12px/1.3 var(--font-text);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+  .envios__d {
+    font-size: 14px;
+    color: var(--texto-2-osc);
+  }
+  @media (min-width: 768px) {
+    .envios {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .envios__dato:nth-child(odd) {
+      padding-right: 24px;
+    }
+  }
+  @media (min-width: 1024px) {
+    .envios {
+      grid-template-columns: repeat(4, 1fr);
+      border-bottom: 1px solid var(--hilo-osc);
+    }
+    .envios__dato {
+      padding: 20px 24px 20px 0;
+      border-bottom: 0;
+    }
+    .envios__dato + .envios__dato {
+      padding-left: 24px;
+      border-left: 1px solid var(--hilo-osc);
+    }
+  }
+</style>
